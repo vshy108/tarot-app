@@ -1,5 +1,9 @@
+<script setup lang="ts">
+import TarotBoard from '@/components/TarotBoard.vue'
+</script>
+
 <template>
-  <div class="min-h-screen bg-gradient-to-br from-purple-800 to-pink-500 flex items-center justify-center text-white text-3xl">
-    Tailwind is working! 🎉
-  </div>
+  <main class="min-h-screen bg-gradient-to-br from-purple-800 to-pink-500 text-white flex items-center justify-center">
+    <TarotBoard />
+  </main>
 </template>
