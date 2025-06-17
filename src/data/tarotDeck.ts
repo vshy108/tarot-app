@@ -1,0 +1,95 @@
+export interface TarotCard {
+    name: string;
+    nameZh: string;
+    image: string;
+}
+
+export type TarotDeck = Record<string, TarotCard>;
+
+// Load images, remember /src is needed
+const images = import.meta.glob('/src/assets/cards/*.png', { eager: true, import: 'default' }) as Record<string, string>
+
+export const tarotDeck: TarotDeck = {
+    "MAJ-00": { "name": "The Fool", "nameZh": "愚人", "image": images["/src/assets/cards/maj-00-the-fool.png"] },
+    "MAJ-01": { "name": "The Magician", "nameZh": "魔术师", "image": images["/src/assets/cards/maj-01-the-magician.png"] },
+    "MAJ-02": { "name": "The High Priestess", "nameZh": "女祭司", "image": images["/src/assets/cards/maj-02-the-high-priestess.png"] },
+    "MAJ-03": { "name": "The Empress", "nameZh": "皇后", "image": images["/src/assets/cards/maj-03-the-empress.png"] },
+    "MAJ-04": { "name": "The Emperor", "nameZh": "皇帝", "image": images["/src/assets/cards/maj-04-the-emperor.png"] },
+    "MAJ-05": { "name": "The Hierophant", "nameZh": "教皇", "image": images["/src/assets/cards/maj-05-the-hierophant.png"] },
+    "MAJ-06": { "name": "The Lovers", "nameZh": "恋人", "image": images["/src/assets/cards/maj-06-the-lovers.png"] },
+    "MAJ-07": { "name": "The Chariot", "nameZh": "战车", "image": images["/src/assets/cards/maj-07-the-chariot.png"] },
+    "MAJ-08": { "name": "Strength", "nameZh": "力量", "image": images["/src/assets/cards/maj-08-strength.png"] },
+    "MAJ-09": { "name": "The Hermit", "nameZh": "隐士", "image": images["/src/assets/cards/maj-09-the-hermit.png"] },
+    "MAJ-10": { "name": "Wheel of Fortune", "nameZh": "命运之轮", "image": images["/src/assets/cards/maj-10-wheel-of-fortune.png"] },
+    "MAJ-11": { "name": "Justice", "nameZh": "正义", "image": images["/src/assets/cards/maj-11-justice.png"] },
+    "MAJ-12": { "name": "The Hanged Man", "nameZh": "倒吊人", "image": images["/src/assets/cards/maj-12-the-hanged-man.png"] },
+    "MAJ-13": { "name": "Death", "nameZh": "死神", "image": images["/src/assets/cards/maj-13-death.png"] },
+    "MAJ-14": { "name": "Temperance", "nameZh": "节制", "image": images["/src/assets/cards/maj-14-temperance.png"] },
+    "MAJ-15": { "name": "The Devil", "nameZh": "恶魔", "image": images["/src/assets/cards/maj-15-the-devil.png"] },
+    "MAJ-16": { "name": "The Tower", "nameZh": "高塔", "image": images["/src/assets/cards/maj-16-the-tower.png"] },
+    "MAJ-17": { "name": "The Star", "nameZh": "星星", "image": images["/src/assets/cards/maj-17-the-star.png"] },
+    "MAJ-18": { "name": "The Moon", "nameZh": "月亮", "image": images["/src/assets/cards/maj-18-the-moon.png"] },
+    "MAJ-19": { "name": "The Sun", "nameZh": "太阳", "image": images["/src/assets/cards/maj-19-the-sun.png"] },
+    "MAJ-20": { "name": "Judgement", "nameZh": "审判", "image": images["/src/assets/cards/maj-20-judgement.png"] },
+    "MAJ-21": { "name": "The World", "nameZh": "世界", "image": images["/src/assets/cards/maj-21-the-world.png"] },
+
+    "W-01": { "name": "Ace of Wands", "nameZh": "权杖王牌", "image": images["/src/assets/cards/w-01.png"] },
+    "W-02": { "name": "Two of Wands", "nameZh": "权杖二", "image": images["/src/assets/cards/w-02.png"] },
+    "W-03": { "name": "Three of Wands", "nameZh": "权杖三", "image": images["/src/assets/cards/w-03.png"] },
+    "W-04": { "name": "Four of Wands", "nameZh": "权杖四", "image": images["/src/assets/cards/w-04.png"] },
+    "W-05": { "name": "Five of Wands", "nameZh": "权杖五", "image": images["/src/assets/cards/w-05.png"] },
+    "W-06": { "name": "Six of Wands", "nameZh": "权杖六", "image": images["/src/assets/cards/w-06.png"] },
+    "W-07": { "name": "Seven of Wands", "nameZh": "权杖七", "image": images["/src/assets/cards/w-07.png"] },
+    "W-08": { "name": "Eight of Wands", "nameZh": "权杖八", "image": images["/src/assets/cards/w-08.png"] },
+    "W-09": { "name": "Nine of Wands", "nameZh": "权杖九", "image": images["/src/assets/cards/w-09.png"] },
+    "W-10": { "name": "Ten of Wands", "nameZh": "权杖十", "image": images["/src/assets/cards/w-10.png"] },
+    "W-PAGE": { "name": "Page of Wands", "nameZh": "权杖侍从", "image": images["/src/assets/cards/w-page.png"] },
+    "W-KNIGHT": { "name": "Knight of Wands", "nameZh": "权杖骑士", "image": images["/src/assets/cards/w-knight.png"] },
+    "W-QUEEN": { "name": "Queen of Wands", "nameZh": "权杖皇后", "image": images["/src/assets/cards/w-queen.png"] },
+    "W-KING": { "name": "King of Wands", "nameZh": "权杖国王", "image": images["/src/assets/cards/w-king.png"] },
+
+    "C-01": { "name": "Ace of Cups", "nameZh": "圣杯王牌", "image": images["/src/assets/cards/c-01.png"] },
+    "C-02": { "name": "Two of Cups", "nameZh": "圣杯二", "image": images["/src/assets/cards/c-02.png"] },
+    "C-03": { "name": "Three of Cups", "nameZh": "圣杯三", "image": images["/src/assets/cards/c-03.png"] },
+    "C-04": { "name": "Four of Cups", "nameZh": "圣杯四", "image": images["/src/assets/cards/c-04.png"] },
+    "C-05": { "name": "Five of Cups", "nameZh": "圣杯五", "image": images["/src/assets/cards/c-05.png"] },
+    "C-06": { "name": "Six of Cups", "nameZh": "圣杯六", "image": images["/src/assets/cards/c-06.png"] },
+    "C-07": { "name": "Seven of Cups", "nameZh": "圣杯七", "image": images["/src/assets/cards/c-07.png"] },
+    "C-08": { "name": "Eight of Cups", "nameZh": "圣杯八", "image": images["/src/assets/cards/c-08.png"] },
+    "C-09": { "name": "Nine of Cups", "nameZh": "圣杯九", "image": images["/src/assets/cards/c-09.png"] },
+    "C-10": { "name": "Ten of Cups", "nameZh": "圣杯十", "image": images["/src/assets/cards/c-10.png"] },
+    "C-PAGE": { "name": "Page of Cups", "nameZh": "圣杯侍从", "image": images["/src/assets/cards/c-page.png"] },
+    "C-KNIGHT": { "name": "Knight of Cups", "nameZh": "圣杯骑士", "image": images["/src/assets/cards/c-knight.png"] },
+    "C-QUEEN": { "name": "Queen of Cups", "nameZh": "圣杯皇后", "image": images["/src/assets/cards/c-queen.png"] },
+    "C-KING": { "name": "King of Cups", "nameZh": "圣杯国王", "image": images["/src/assets/cards/c-king.png"] },
+
+    "S-01": { "name": "Ace of Swords", "nameZh": "宝剑王牌", "image": images["/src/assets/cards/s-01.png"] },
+    "S-02": { "name": "Two of Swords", "nameZh": "宝剑二", "image": images["/src/assets/cards/s-02.png"] },
+    "S-03": { "name": "Three of Swords", "nameZh": "宝剑三", "image": images["/src/assets/cards/s-03.png"] },
+    "S-04": { "name": "Four of Swords", "nameZh": "宝剑四", "image": images["/src/assets/cards/s-04.png"] },
+    "S-05": { "name": "Five of Swords", "nameZh": "宝剑五", "image": images["/src/assets/cards/s-05.png"] },
+    "S-06": { "name": "Six of Swords", "nameZh": "宝剑六", "image": images["/src/assets/cards/s-06.png"] },
+    "S-07": { "name": "Seven of Swords", "nameZh": "宝剑七", "image": images["/src/assets/cards/s-07.png"] },
+    "S-08": { "name": "Eight of Swords", "nameZh": "宝剑八", "image": images["/src/assets/cards/s-08.png"] },
+    "S-09": { "name": "Nine of Swords", "nameZh": "宝剑九", "image": images["/src/assets/cards/s-09.png"] },
+    "S-10": { "name": "Ten of Swords", "nameZh": "宝剑十", "image": images["/src/assets/cards/s-10.png"] },
+    "S-PAGE": { "name": "Page of Swords", "nameZh": "宝剑侍从", "image": images["/src/assets/cards/s-page.png"] },
+    "S-KNIGHT": { "name": "Knight of Swords", "nameZh": "宝剑骑士", "image": images["/src/assets/cards/s-knight.png"] },
+    "S-QUEEN": { "name": "Queen of Swords", "nameZh": "宝剑皇后", "image": images["/src/assets/cards/s-queen.png"] },
+    "S-KING": { "name": "King of Swords", "nameZh": "宝剑国王", "image": images["/src/assets/cards/s-king.png"] },
+
+    "P-01": { "name": "Ace of Pentacles", "nameZh": "星币王牌", "image": images["/src/assets/cards/p-01.png"] },
+    "P-02": { "name": "Two of Pentacles", "nameZh": "星币二", "image": images["/src/assets/cards/p-02.png"] },
+    "P-03": { "name": "Three of Pentacles", "nameZh": "星币三", "image": images["/src/assets/cards/p-03.png"] },
+    "P-04": { "name": "Four of Pentacles", "nameZh": "星币四", "image": images["/src/assets/cards/p-04.png"] },
+    "P-05": { "name": "Five of Pentacles", "nameZh": "星币五", "image": images["/src/assets/cards/p-05.png"] },
+    "P-06": { "name": "Six of Pentacles", "nameZh": "星币六", "image": images["/src/assets/cards/p-06.png"] },
+    "P-07": { "name": "Seven of Pentacles", "nameZh": "星币七", "image": images["/src/assets/cards/p-07.png"] },
+    "P-08": { "name": "Eight of Pentacles", "nameZh": "星币八", "image": images["/src/assets/cards/p-08.png"] },
+    "P-09": { "name": "Nine of Pentacles", "nameZh": "星币九", "image": images["/src/assets/cards/p-09.png"] },
+    "P-10": { "name": "Ten of Pentacles", "nameZh": "星币十", "image": images["/src/assets/cards/p-10.png"] },
+    "P-PAGE": { "name": "Page of Pentacles", "nameZh": "星币侍从", "image": images["/src/assets/cards/p-page.png"] },
+    "P-KNIGHT": { "name": "Knight of Pentacles", "nameZh": "星币骑士", "image": images["/src/assets/cards/p-knight.png"] },
+    "P-QUEEN": { "name": "Queen of Pentacles", "nameZh": "星币皇后", "image": images["/src/assets/cards/p-queen.png"] },
+    "P-KING": { "name": "King of Pentacles", "nameZh": "星币国王", "image": images["/src/assets/cards/p-king.png"] }
+}
