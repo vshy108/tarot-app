@@ -1,17 +1,15 @@
-
-
 <script setup lang="ts">
 import { ref, onMounted, nextTick } from 'vue'
-import { type TarotCardWithId, useTarotDeck } from '@/composables/useTarotDeck'
+import { type CardWithId, useDeck } from '@/composables/useDeck'
 import { gsap } from 'gsap'
-import TarotCardModal from '@/components/TarotCardModal.vue'
+import CardModal from '@/components/CardModal.vue'
 import CardBack from '../components/CardBack.vue'
 
-const deck = useTarotDeck()
-const fullDeck = ref<TarotCardWithId[]>(deck)
-const drawnCards = ref<TarotCardWithId[]>([])
+const deck = useDeck()
+const fullDeck = ref<CardWithId[]>(deck)
+const drawnCards = ref<CardWithId[]>([])
 const revealedIndexes = ref<number[]>([])
-const selectedCard = ref<TarotCardWithId | null>(null)
+const selectedCard = ref<CardWithId | null>(null)
 
 const numberOfCardsToDraw = 3
 
@@ -38,7 +36,7 @@ function revealCard(index: number) {
   }
 }
 
-function openModal(card: TarotCardWithId) {
+function openModal(card: CardWithId) {
   selectedCard.value = card
 }
 </script>
@@ -80,10 +78,6 @@ function openModal(card: TarotCardWithId) {
       </div>
     </div>
 
-    <TarotCardModal
-      v-if="selectedCard"
-      :card="selectedCard"
-      @close="selectedCard = null"
-    />
+    <CardModal v-if="selectedCard" :card="selectedCard" @close="selectedCard = null" />
   </div>
 </template>

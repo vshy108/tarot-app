@@ -1,15 +1,15 @@
-export interface TarotCard {
+export interface Card {
     name: string;
     nameZh: string;
     image: string;
 }
 
-export type TarotDeck = Record<string, TarotCard>;
+export type Deck = Record<string, Card>;
 
 // Load images, remember /src is needed
 const images = import.meta.glob('/src/assets/cards/*.png', { eager: true, import: 'default' }) as Record<string, string>
 
-export const tarotDeck: TarotDeck = {
+export const deck: Deck = {
     "MAJ-00": { "name": "The Fool", "nameZh": "愚人", "image": images["/src/assets/cards/maj-00-the-fool.png"] },
     "MAJ-01": { "name": "The Magician", "nameZh": "魔术师", "image": images["/src/assets/cards/maj-01-the-magician.png"] },
     "MAJ-02": { "name": "The High Priestess", "nameZh": "女祭司", "image": images["/src/assets/cards/maj-02-the-high-priestess.png"] },
