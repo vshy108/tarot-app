@@ -52,7 +52,7 @@ function closeModal() {
         <img
           :src="card.image"
           :alt="card.name"
-          class="w-full h-full object-cover rounded shadow-md transition-all duration-300 box-border hover:border-4 hover:border-yellow-400"
+          class="w-full h-full object-contain rounded shadow-md transition-all duration-300 box-border hover:border-4 hover:border-yellow-400"
         />
       </div>
     </div>
@@ -73,7 +73,7 @@ function closeModal() {
             <img
               :src="card.image"
               :alt="card.name"
-              class="w-full h-full object-cover rounded shadow-md transition-all duration-300 box-border hover:border-4 hover:border-yellow-400"
+              class="w-full h-full object-contain rounded shadow-md transition-all duration-300 box-border hover:border-4 hover:border-yellow-400"
             />
           </div>
         </div>
