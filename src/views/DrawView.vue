@@ -162,10 +162,16 @@ function confirmQuestion() {
 }
 
 function chooseCard(card: any) {
-  if (chosenCards.value.includes(card)) return;
-  if (spreadMode.value === "1" && chosenCards.value.length >= 1) return;
-  if (spreadMode.value === "3" && chosenCards.value.length >= 3) return;
-  chosenCards.value.push(card);
+  const index = chosenCards.value.indexOf(card);
+  if (index !== -1) {
+    // Deselect if already chosen
+    chosenCards.value.splice(index, 1);
+  } else {
+    const limit = spreadMode.value === "1" ? 1 : 3;
+    if (chosenCards.value.length < limit) {
+      chosenCards.value.push(card);
+    }
+  }
 }
 
 function toggleOrientation(card: any) {
