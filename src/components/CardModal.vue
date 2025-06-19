@@ -16,7 +16,7 @@
         <img
           :src="card.image"
           :alt="card.name"
-          class="w-40 h-64 object-contain rounded-lg shadow-md mb-2 transition-transform duration-300"
+          class="w-40 h-64 object-contain rounded-lg mb-2 transition-transform duration-300"
           :class="{ 'rotate-180': card.orientation === 'reversed' }"
         />
         <span class="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-2">
