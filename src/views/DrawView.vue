@@ -5,6 +5,7 @@ import { useDeck } from "@/composables/useDeck";
 import { useGsapTicker } from "@/composables/useGsapTicker";
 import { useSmoothStop } from "@/composables/useSmoothStop";
 import CardBack from "@/components/CardBack.vue";
+import DrawResult from "@/components/DrawResult.vue";
 
 const fullDeck = ref(useDeck());
 
@@ -17,6 +18,7 @@ const spreadMode = ref<"1" | "3" | null>(null);
 const userQuestion = ref("");
 const showQuestionInput = ref(false);
 const questionConfirmed = ref(false);
+const isConfirmed = ref(false);
 const chosenCards = ref<any[]>([]);
 
 const cutStart = ref(1);
@@ -36,6 +38,36 @@ function showCutInfoToast(start: number, end: number, position: string) {
 
 const isCutting = ref(false);
 let cutCooldownTimer: ReturnType<typeof setTimeout> | null = null;
+
+const isWaitingForCardSelection = computed(() => {
+  if (
+    !spreadMode.value ||
+    !questionConfirmed.value ||
+    !hasCutFinished.value ||
+    isConfirmed.value
+  ) {
+    return false;
+  }
+  return (
+    (spreadMode.value === "1" && chosenCards.value.length !== 1) ||
+    (spreadMode.value === "3" && chosenCards.value.length !== 3)
+  );
+});
+
+const isReadyToConfirm = computed(() => {
+  if (
+    !spreadMode.value ||
+    !questionConfirmed.value ||
+    !hasCutFinished.value ||
+    isConfirmed.value
+  ) {
+    return false;
+  }
+  return (
+    (spreadMode.value === "1" && chosenCards.value.length === 1) ||
+    (spreadMode.value === "3" && chosenCards.value.length === 3)
+  );
+});
 
 const scatteredCards = ref(
   fullDeck.value.map((card) => {
@@ -337,8 +369,29 @@ function toggleOrientation(card: any) {
       </div>
     </div>
 
+    <!-- Spread info + question -->
+    <div v-if="isWaitingForCardSelection" class="text-white text-center mb-4 space-y-2">
+      <div class="text-xl font-semibold">
+        {{ spreadMode === "1" ? "1 Card Spread" : "3 Cards Spread" }}
+      </div>
+      <div class="italic text-sm text-gray-300">"{{ userQuestion }}"</div>
+    </div>
+
+    <!-- Confirm Button shown after enough cards chosen -->
     <div
-      v-if="spreadMode && questionConfirmed && hasCutFinished"
+      v-if="isReadyToConfirm"
+      class="absolute top-4 left-1/2 transform -translate-x-1/2 z-10"
+    >
+      <button
+        @click="() => (isConfirmed = true)"
+        class="px-6 py-2 bg-green-600 text-white rounded-xl shadow-lg hover:bg-green-700"
+      >
+        Confirm Selection
+      </button>
+    </div>
+
+    <div
+      v-if="spreadMode && questionConfirmed && hasCutFinished && !isConfirmed"
       class="absolute inset-0 pt-16 pb-4 px-2 z-0 overflow-y-auto grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 xl:grid-cols-13 gap-2"
     >
       <div
@@ -359,6 +412,8 @@ function toggleOrientation(card: any) {
         </div>
       </div>
     </div>
+
+    <DrawResult v-if="isConfirmed" :cards="chosenCards" />
 
     <transition name="fade">
       <div
