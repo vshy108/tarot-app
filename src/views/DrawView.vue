@@ -299,14 +299,19 @@ function toggleOrientation(card: any) {
     </div>
 
     <!-- Spread Question Input -->
-    <div v-if="spreadMode && showQuestionInput && !questionConfirmed" class="absolute inset-0 z-10 flex flex-col items-center justify-center text-white space-y-4">
+    <div
+      v-if="spreadMode && showQuestionInput && !questionConfirmed"
+      class="absolute inset-0 z-10 flex flex-col items-center justify-center text-white space-y-4"
+    >
       <p class="text-center">Enter your question:</p>
       <input
         v-model="userQuestion"
         placeholder="What is your question?"
         class="w-96 px-4 py-2 rounded-xl text-white bg-black placeholder-white border border-white"
       />
-      <button @click="confirmQuestion" class="px-4 py-2 bg-green-600 rounded-xl">OK</button>
+      <button @click="confirmQuestion" class="px-4 py-2 bg-green-600 rounded-xl">
+        OK
+      </button>
     </div>
 
     <!-- Scattered display before Done Cut -->
@@ -328,7 +333,7 @@ function toggleOrientation(card: any) {
 
     <div
       v-if="spreadMode && questionConfirmed && hasCutFinished"
-      class="absolute inset-0 grid grid-cols-6 gap-[2px] p-2 z-0"
+      class="absolute inset-0 pt-16 pb-4 px-2 z-0 overflow-y-auto grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 xl:grid-cols-13 gap-2"
     >
       <div
         v-for="card in scatteredCards"
@@ -337,7 +342,7 @@ function toggleOrientation(card: any) {
         class="relative cursor-pointer hover:scale-105 transition-transform"
       >
         <div
-          class="w-20 h-32"
+          class="w-full aspect-[5/8]"
           :class="{
             'ring-4 ring-yellow-400': chosenCards.includes(card),
             'rotate-180': card.isReversed,
