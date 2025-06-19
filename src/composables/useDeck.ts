@@ -1,5 +1,3 @@
-// File: src/composables/useDeck.ts
-
 import { deck } from '@/data/deck'
 import type { Card } from '@/data/deck'
 

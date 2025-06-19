@@ -1,23 +1,22 @@
 <script setup lang="ts">
-import { ref, onUnmounted } from "vue";
-import { gsap } from "gsap";
-import { useDeck } from "@/composables/useDeck";
-import CardBack from "@/components/CardBack.vue";
+import { ref, onUnmounted } from 'vue'
+import { gsap } from 'gsap'
+import { useDeck } from '@/composables/useDeck'
+import { useSmoothStop } from '@/composables/useSmoothStop'
+import CardBack from '@/components/CardBack.vue'
 
-const fullDeck = ref(useDeck());
+const fullDeck = ref(useDeck())
 
-const isShuffling = ref(false);
-const isStopping = ref(false);
-const isAnimating = ref(false); // 🆕 new flag to keep transition class
-const shuffleDirection = ref<"clockwise" | "anticlockwise" | null>(null);
-let tickerCallback: (() => void) | null = null;
-let stopTimeoutId: ReturnType<typeof setTimeout> | null = null
+const { isStopping, isAnimating, triggerSmoothStop } = useSmoothStop(10)
+const isShuffling = ref(false)
+const shuffleDirection = ref<'clockwise' | 'anticlockwise' | null>(null)
+let tickerCallback: (() => void) | null = null
 
 const scatteredCards = ref(
   fullDeck.value.map((card) => {
-    const angle = Math.random() * 360 * (Math.PI / 180);
-    const radius = 100 + Math.random() * 150;
-    const speed = 0.005 + Math.random() * 0.01;
+    const angle = (Math.random() * 360) * (Math.PI / 180)
+    const radius = 100 + Math.random() * 150
+    const speed = 0.005 + Math.random() * 0.01
     return {
       ...card,
       angle,
@@ -26,62 +25,50 @@ const scatteredCards = ref(
       x: Math.cos(angle) * radius,
       y: Math.sin(angle) * radius,
       rotate: Math.random() * 360 - 180,
-    };
+    }
   })
-);
+)
 
-function startShuffle(direction: "clockwise" | "anticlockwise") {
-  if (isShuffling.value || isStopping.value) return;
+function startShuffle(direction: 'clockwise' | 'anticlockwise') {
+  if (isShuffling.value || isStopping.value) return
 
-  stopShuffle(true);
-
-  shuffleDirection.value = direction;
-  isShuffling.value = true;
-  isAnimating.value = true;
+  stopShuffle(true)
+  shuffleDirection.value = direction
+  isShuffling.value = true
 
   tickerCallback = () => {
     scatteredCards.value.forEach((card) => {
-      card.angle += direction === "clockwise" ? card.speed : -card.speed;
-      card.x = Math.cos(card.angle) * card.radius;
-      card.y = Math.sin(card.angle) * card.radius;
-    });
-  };
+      card.angle += (direction === 'clockwise' ? card.speed : -card.speed)
+      card.x = Math.cos(card.angle) * card.radius
+      card.y = Math.sin(card.angle) * card.radius
+    })
+  }
 
-  gsap.ticker.add(tickerCallback);
+  gsap.ticker.add(tickerCallback)
 }
 
 function stopShuffle(immediate = false) {
-  if (!isShuffling.value && !tickerCallback) return;
+  if (!isShuffling.value && !tickerCallback) return
 
-  isShuffling.value = false;
-  shuffleDirection.value = null;
+  isShuffling.value = false
+  shuffleDirection.value = null
 
   if (tickerCallback) {
-    gsap.ticker.remove(tickerCallback);
-    tickerCallback = null;
+    gsap.ticker.remove(tickerCallback)
+    tickerCallback = null
   }
 
   if (!immediate) {
-    isStopping.value = true;
-    // 🔥 Wait 300ms so CSS transition completes smoothly before removing class
-    stopTimeoutId = window.setTimeout(() => {
-      isAnimating.value = false;
-      isStopping.value = false;
-    }, 10);
+    triggerSmoothStop()
   } else {
-    isAnimating.value = false;
-    isStopping.value = false;
+    // immediate cleanup
+    isAnimating.value = false
   }
 }
 
-onUnmounted(() => {
-  stopShuffle(true)
-  if (stopTimeoutId !== null) {
-    clearTimeout(stopTimeoutId)
-    stopTimeoutId = null
-  }
-})
+onUnmounted(() => stopShuffle(true))
 </script>
+
 
 <template>
   <div
