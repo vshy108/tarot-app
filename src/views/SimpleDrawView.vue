@@ -87,7 +87,7 @@ function finalOrientation(card: DrawnCard, index: number): 'upright' | 'reversed
 </script>
 
 <template>
-  <div class="min-h-screen bg-gradient-to-b from-purple-800 to-indigo-900 text-white p-8">
+  <div class="min-h-full bg-gradient-to-b from-purple-800 to-indigo-900 text-white p-8">
     <h1 class="text-3xl font-bold text-center mb-8">Simple Draw</h1>
 
     <div class="flex justify-center">

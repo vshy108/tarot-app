@@ -1,9 +1,7 @@
 <template>
-  <div
-    class="min-h-screen flex flex-col bg-gradient-to-b from-purple-950 to-indigo-950 text-white"
-  >
+  <div class="h-screen flex flex-col bg-gradient-to-b from-purple-950 to-indigo-950 text-white">
     <!-- Navigation Header -->
-    <header class="bg-purple-900 shadow-md">
+    <header class="bg-purple-900 shadow-md z-10">
       <div class="max-w-7xl mx-auto px-4 py-3 flex justify-between items-center">
         <RouterLink
           to="/"
@@ -88,8 +86,8 @@
     </header>
 
     <!-- Page Content -->
-    <main class="flex-grow">
-      <RouterView />
+    <main class="flex-grow flex">
+      <RouterView class="flex-grow" />
     </main>
   </div>
 </template>

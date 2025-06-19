@@ -3,25 +3,25 @@ import { ref } from 'vue'
 import { useDeck } from '@/composables/useDeck'
 import CardBack from '@/components/CardBack.vue'
 
-// Full deck of 78 cards
 const fullDeck = ref(useDeck())
 
-// Create scattered layout with random transforms
 const scatteredCards = ref(
   fullDeck.value.map((card) => ({
     ...card,
-    x: Math.random() * 200 - 100,         // -100px to +100px
-    y: Math.random() * 100 - 50,          // -50px to +50px
-    rotate: Math.random() * 360 - 180,    // -180deg to +180deg
+    x: Math.random() * 500 - 250,
+    y: Math.random() * 300 - 150,
+    rotate: Math.random() * 360 - 180,
   }))
 )
 </script>
 
 <template>
-  <div class="relative w-full h-screen overflow-hidden bg-gradient-to-b from-purple-950 to-indigo-950 p-4">
-    <div class="absolute inset-0">
+  <!-- Use h-full so it fills remaining space inside App.vue layout -->
+  <div class="relative w-full h-full overflow-hidden bg-gradient-to-b from-purple-950 to-indigo-950">
+    <!-- Center the scatter zone -->
+    <div class="absolute left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2">
       <div
-        v-for="(card, index) in scatteredCards"
+        v-for="card in scatteredCards"
         :key="card.id"
         class="absolute w-20 h-32 transition-transform duration-300"
         :style="{
