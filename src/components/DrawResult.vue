@@ -3,6 +3,7 @@ import { ref, nextTick, computed } from 'vue'
 import { type DrawnCard } from '@/composables/useDeck'
 import CardModal from '@/components/CardModal.vue'
 import CardBack from '@/components/CardBack.vue'
+import ChosenOverlay from "@/components/ChosenOverlay.vue";
 
 const props = defineProps<{
   cards: DrawnCard[]
@@ -89,17 +90,12 @@ function finalOrientation(card: DrawnCard, index: number): 'upright' | 'reversed
             @click.stop="openModal(card)"
           />
           <CardBack v-else :class="`card-back-${index}`" />
-          <!-- Chosen number overlay in center -->
-          <div
-            v-if="cards.includes(card) && !revealedIndexes.includes(index)"
-            class="absolute inset-0 flex items-center justify-center"
-          >
-            <div
-              class="w-10 h-10 rounded-full bg-yellow-400 text-black text-lg font-bold flex items-center justify-center shadow-md"
-            >
-              {{ cards.indexOf(card) + 1 }}
-            </div>
-          </div>
+          <ChosenOverlay
+            :card="card"
+            :list="cards"
+            :index="index"
+            :hiddenIndexes="revealedIndexes"
+          />
         </div>
       </div>
     </div>
