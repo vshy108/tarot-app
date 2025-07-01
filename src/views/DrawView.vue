@@ -502,6 +502,18 @@ function chooseCard(card: any) {
           }"
         >
           <CardBack />
+
+          <!-- Chosen number overlay in center -->
+          <div
+            v-if="chosenCards.includes(card)"
+            class="absolute inset-0 flex items-center justify-center"
+          >
+            <div
+              class="w-10 h-10 rounded-full bg-yellow-400 text-black text-lg font-bold flex items-center justify-center shadow-md"
+            >
+              {{ chosenCards.indexOf(card) + 1 }}
+            </div>
+          </div>
         </div>
       </div>
     </div>
