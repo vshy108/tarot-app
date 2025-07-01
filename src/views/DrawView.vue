@@ -38,6 +38,7 @@ function showCutInfoToast(start: number, end: number, position: string) {
 
 const isCutting = ref(false);
 let cutCooldownTimer: ReturnType<typeof setTimeout> | null = null;
+const deckTarget = { x: -40, y: -64 };
 
 const isWaitingForCardSelection = computed(() => {
   if (
@@ -128,8 +129,6 @@ onUnmounted(() => {
   if (cutCooldownTimer) clearTimeout(cutCooldownTimer);
 });
 
-const deckTarget = { x: -40, y: -64 };
-
 function collectCardsToDeck() {
   if (isShuffling.value) return;
 
@@ -152,14 +151,16 @@ function collectCardsToDeck() {
   hasCollectedToDeck.value = true;
 }
 
+const clamp = (val: number, min: number, max: number) =>
+  Math.min(Math.max(val, min), max);
+
 function cutDeck() {
   if (isCutting.value) return;
   isCutting.value = true;
 
-  const rawStart = Math.max(1, Math.min(78, cutStart.value));
-  const rawEnd = Math.max(1, Math.min(78, cutEnd.value));
-  const from = Math.min(rawStart, rawEnd);
-  const to = Math.max(rawStart, rawEnd);
+  const [from, to] = [cutStart.value, cutEnd.value]
+    .map((v) => clamp(v, 1, 78))
+    .toSorted((a, b) => a - b);
 
   const sorted = scatteredCards.value.toSorted((a, b) => {
     if (b.y !== a.y) return a.y - b.y;
@@ -169,17 +170,52 @@ function cutDeck() {
   const portion = sorted.slice(from - 1, to);
   const rest = sorted.slice(0, from - 1).concat(sorted.slice(to));
 
-  scatteredCards.value =
-    cutPosition.value === "top" ? [...portion, ...rest] : [...rest, ...portion];
+  // Animate cut separation
+  const cutOffset = 80;
+  portion.forEach((card, i) => {
+    gsap.to(card, {
+      y: card.y - (cutPosition.value === "top" ? cutOffset : -cutOffset),
+      duration: 0.3,
+      delay: i * 0.01,
+      ease: "power1.out",
+    });
+  });
 
-  cutCount.value += 1;
-  showCutInfoToast(from, to, cutPosition.value);
+  rest.forEach((card, i) => {
+    gsap.to(card, {
+      y: card.y + (cutPosition.value === "top" ? cutOffset : -cutOffset),
+      duration: 0.3,
+      delay: i * 0.005,
+      ease: "power1.out",
+    });
+  });
 
-  if (cutCooldownTimer) clearTimeout(cutCooldownTimer);
-  cutCooldownTimer = setTimeout(() => {
-    isCutting.value = false;
-    cutCooldownTimer = null;
-  }, 1000);
+  setTimeout(() => {
+    const reassembled =
+      cutPosition.value === "top" ? [...portion, ...rest] : [...rest, ...portion];
+
+    scatteredCards.value = reassembled;
+
+    scatteredCards.value.forEach((card, index) => {
+      gsap.to(card, {
+        x: deckTarget.x,
+        y: deckTarget.y,
+        rotate: 0,
+        duration: 0.5,
+        delay: index * 0.03,
+        ease: "power2.inOut",
+      });
+    });
+
+    cutCount.value += 1;
+    showCutInfoToast(from, to, cutPosition.value);
+
+    if (cutCooldownTimer) clearTimeout(cutCooldownTimer);
+    cutCooldownTimer = setTimeout(() => {
+      isCutting.value = false;
+      cutCooldownTimer = null;
+    }, 1000);
+  }, 400); // wait for first animation to finish
 }
 
 function finishCut() {
