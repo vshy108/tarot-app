@@ -216,12 +216,15 @@ function cutDeck() {
       });
 
       sortedCards.value.forEach((card, index) => {
+        const isReversed = isCardReversed(card.rotate);
+
         collectTimeline.to(
           card,
           {
             x: deckTarget.x,
-            y: deckTarget.y,
-            rotate: 0,
+            y: isReversed ? deckTarget.y + cardHeight : deckTarget.y,
+            rotate: isReversed ? 180 : 0,
+            orientation: isReversed ? "reversed" : "upright",
             duration: 0.5,
             delay: index * 0.03,
             ease: "power2.inOut",
