@@ -104,7 +104,7 @@ const scatteredCards = ref(
       x: Math.cos(angle) * radius,
       y: Math.sin(angle) * radius,
       rotate,
-      isReversed: null,
+      orientation: null,
       revealed: false,
     };
   })
@@ -172,7 +172,7 @@ function collectCardsToDeck() {
       x: deckTarget.x,
       y: isReversed ? deckTarget.y + cardHeight : deckTarget.y,
       rotate: isReversed ? 180 : 0,
-      isReversed,
+      orientation: isReversed ? "reversed" : "upright",
       duration: 0.5,
       delay: index * 0.03,
       ease: "power2.inOut",
@@ -281,10 +281,6 @@ function chooseCard(card: any) {
       chosenCards.value.push(card);
     }
   }
-}
-
-function toggleOrientation(card: any) {
-  card.isReversed = !card.isReversed;
 }
 </script>
 
@@ -491,7 +487,7 @@ function toggleOrientation(card: any) {
       class="absolute inset-0 pt-16 pb-4 px-2 z-0 overflow-y-auto grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 xl:grid-cols-13 gap-2"
     >
       <div
-        v-for="card in scatteredCards"
+        v-for="card in sortedCards"
         :key="card.id"
         @click="() => chooseCard(card)"
         class="relative cursor-pointer hover:scale-105 transition-transform"
@@ -500,9 +496,7 @@ function toggleOrientation(card: any) {
           class="w-full aspect-[5/8]"
           :class="{
             'ring-4 ring-yellow-400': chosenCards.includes(card),
-            'rotate-180': card.isReversed,
           }"
-          @dblclick.stop="() => toggleOrientation(card)"
         >
           <CardBack />
         </div>
