@@ -1,14 +1,14 @@
 <script setup lang="ts">
-import { ref, onUnmounted, computed, watch, onMounted } from "vue";
+import { ref, onUnmounted, computed, onMounted } from "vue";
 import { gsap } from "gsap";
-import { useDeck } from "@/composables/useDeck";
+import { CardWithId, type CollectedCard, type ScatteredCard, useDeck } from "@/composables/useDeck";
 import { useGsapTicker } from "@/composables/useGsapTicker";
 import { useSmoothStop } from "@/composables/useSmoothStop";
 import CardBack from "@/components/CardBack.vue";
 import DrawResult from "@/components/DrawResult.vue";
 import ChosenOverlay from "@/components/ChosenOverlay.vue";
 
-const fullDeck = ref(useDeck());
+const fullDeck = ref<CardWithId[]>(useDeck());
 
 const { isStopping, isAnimating, triggerSmoothStop } = useSmoothStop(10);
 const isShuffling = ref(false);
@@ -21,7 +21,7 @@ const userQuestion = ref("");
 const showQuestionInput = ref(false);
 const questionConfirmed = ref(false);
 const isConfirmed = ref(false);
-const chosenCards = ref<any[]>([]);
+const chosenCards = ref<CollectedCard[]>([]);
 
 const cutStart = ref(1);
 const cutEnd = ref(78);
@@ -49,7 +49,7 @@ const cardWidth = 40;
 const cardHeight = 64;
 const deckTarget = { x: -cardWidth, y: -cardHeight };
 
-const sortedCards = ref<any[]>([]); // shared reactive array
+const sortedCards = ref<CollectedCard[]>([]); // shared reactive array
 
 const isWaitingForCardSelection = computed(() => {
   if (
@@ -91,7 +91,7 @@ const isReadyToConfirm = computed(() => {
   );
 });
 
-const scatteredCards = ref(
+const scatteredCards = ref<ScatteredCard[]>(
   fullDeck.value.map((card) => {
     const angle = Math.random() * 360 * (Math.PI / 180);
     const radius = 100 + Math.random() * 150;
@@ -163,7 +163,13 @@ function collectCardsToDeck() {
     return a.x - b.x;
   });
 
-  sortedCards.value = sorted;
+  sortedCards.value = sorted.map(card => {
+    const isReversed = isCardReversed(card.rotate);
+    return {
+      ...card,
+      orientation: isReversed ? "reversed" : "upright",
+    }
+  });
 
   const lastIndex = sorted.length - 1;
 
@@ -274,7 +280,7 @@ function confirmQuestion() {
   }
 }
 
-function chooseCard(card: any) {
+function chooseCard(card: CollectedCard) {
   const index = chosenCards.value.indexOf(card);
   if (index !== -1) {
     // Deselect if already chosen

@@ -9,11 +9,12 @@
 </template>
 
 <script setup lang="ts">
+import { type DrawnCard } from "@/composables/useDeck";
 import { computed } from "vue";
 
 const props = defineProps<{
-  card: any;
-  list: any[];
+  card: DrawnCard;
+  list: DrawnCard[];
   index?: number;
   hiddenIndexes?: number[];
 }>();
