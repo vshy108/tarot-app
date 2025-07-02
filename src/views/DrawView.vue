@@ -441,7 +441,7 @@ function chooseCard(card: any) {
       <input
         v-model="userQuestion"
         placeholder="What is your question?"
-        class="w-96 px-4 py-2 rounded-xl text-white bg-black placeholder-white border border-white"
+        class="w-96 px-4 py-2 rounded-xl text-white bg-black placeholder-slate-700 border border-white"
       />
       <button @click="confirmQuestion" class="px-4 py-2 bg-green-600 rounded-xl">
         OK
