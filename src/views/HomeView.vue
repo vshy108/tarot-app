@@ -33,13 +33,19 @@
           for divination, reflection, and personal insight.
         </p>
       </div>
-      <div class="bg-white/10 border border-white/20 p-6 rounded-lg shadow-sm">
-        <h2 class="text-xl font-semibold text-pink-200 mb-2">🃏 Major & Minor Arcana</h2>
-        <p class="text-white/70 text-sm">
-          The 22 Major Arcana reveal spiritual lessons and life themes. The 56 Minor
-          Arcana explore day-to-day experiences.
-        </p>
-      </div>
+      <RouterLink to="/cards" class="block">
+        <div
+          class="bg-white/10 border border-white/20 p-6 rounded-lg shadow-sm hover:bg-white/20 hover:border-white/30 transition-colors duration-200"
+        >
+          <h2 class="text-xl font-semibold text-pink-200 mb-2">
+            🃏 Major & Minor Arcana
+          </h2>
+          <p class="text-white/70 text-sm">
+            The 22 Major Arcana reveal spiritual lessons and life themes. The 56 Minor
+            Arcana explore day-to-day experiences.
+          </p>
+        </div>
+      </RouterLink>
     </div>
   </div>
 </template>

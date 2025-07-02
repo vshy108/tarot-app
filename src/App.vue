@@ -1,5 +1,7 @@
 <template>
-  <div class="h-screen flex flex-col bg-gradient-to-b from-purple-950 to-indigo-950 text-white">
+  <div
+    class="h-screen flex flex-col bg-gradient-to-b from-purple-950 to-indigo-950 text-white"
+  >
     <!-- Navigation Header -->
     <header class="bg-purple-900 shadow-md z-10">
       <div class="max-w-7xl mx-auto px-4 py-3 flex justify-between items-center">
@@ -67,21 +69,22 @@
 
       <!-- Mobile Dropdown -->
       <div v-if="isOpen" class="md:hidden px-4 pb-4 space-y-2">
-        <RouterLink to="/" class="block hover:text-pink-400" @click="isOpen = false"
-          >Home</RouterLink
-        >
-        <RouterLink to="/draw" class="block hover:text-pink-400" @click="isOpen = false"
-          >Draw</RouterLink
-        >
+        <RouterLink to="/" class="block hover:text-pink-400" @click="isOpen = false">
+          Home
+        </RouterLink>
+        <RouterLink to="/draw" class="block hover:text-pink-400" @click="isOpen = false">
+          Draw
+        </RouterLink>
         <RouterLink
           to="/simple-draw"
           class="block hover:text-pink-400"
           @click="isOpen = false"
-          >Simple Draw</RouterLink
         >
-        <RouterLink to="/cards" class="block hover:text-pink-400" @click="isOpen = false"
-          >All Cards</RouterLink
-        >
+          Simple Draw
+        </RouterLink>
+        <RouterLink to="/cards" class="block hover:text-pink-400" @click="isOpen = false">
+          All Cards
+        </RouterLink>
       </div>
     </header>
 
