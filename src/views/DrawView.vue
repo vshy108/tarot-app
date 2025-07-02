@@ -31,7 +31,7 @@ const cutPosition = ref<"top" | "bottom">("top");
 const showCutToast = ref(false);
 const cutToastMessage = ref("");
 function showCutInfoToast(start: number, end: number, position: string) {
-  cutToastMessage.value = `Cut cards ${start}–${end} to the ${position}`;
+  cutToastMessage.value = `Cut cards ${start} – ${end} to the ${position}`;
   showCutToast.value = true;
   if (cutToastTimeout) {
     clearTimeout(cutToastTimeout);
@@ -291,11 +291,12 @@ function chooseCard(card: CollectedCard) {
 
 <template>
   <div
-    class="relative w-full h-full overflow-hidden bg-gradient-to-b from-purple-950 to-indigo-950"
+    class="flex flex-col items-center w-full min-h-screen overflow-x-hidden bg-gradient-to-b from-purple-950 to-indigo-950"
   >
+    <!-- Shuffle and Cut Controls -->
     <div
       v-if="!hasCutFinished"
-      class="absolute top-4 left-1/2 transform -translate-x-1/2 z-10 flex flex-wrap gap-4 justify-center"
+      class="flex flex-wrap justify-center gap-4 w-full mt-4 z-10"
     >
       <button
         v-if="!isShuffling && !startCollectedToDeck"
@@ -404,9 +405,10 @@ function chooseCard(card: CollectedCard) {
       </template>
     </div>
 
+    <!-- Spread Selection -->
     <div
       v-if="hasCutFinished && !spreadMode"
-      class="absolute inset-0 z-10 flex flex-col items-center justify-center text-white text-center space-y-4"
+      class="flex flex-col items-center justify-center text-white text-center space-y-4 w-full h-full"
     >
       <p>Choose your spread:</p>
       <button
@@ -433,10 +435,10 @@ function chooseCard(card: CollectedCard) {
       </button>
     </div>
 
-    <!-- Spread Question Input -->
+    <!-- Question Input -->
     <div
       v-if="spreadMode && showQuestionInput && !questionConfirmed"
-      class="absolute inset-0 z-10 flex flex-col items-center justify-center text-white space-y-4"
+      class="flex flex-col items-center justify-center text-white space-y-4 w-full h-full"
     >
       <p class="text-center">Enter your question:</p>
       <input
@@ -452,7 +454,7 @@ function chooseCard(card: CollectedCard) {
     <!-- Scattered display before Done Cut -->
     <div
       v-if="!hasCutFinished"
-      class="absolute left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2"
+      class="flex items-center justify-center w-full h-full relative"
     >
       <div
         v-for="card in scatteredCards"
@@ -474,13 +476,15 @@ function chooseCard(card: CollectedCard) {
       <div class="text-xl font-semibold">
         {{ spreadMode === "1" ? "1 Card Spread" : "3 Cards Spread" }}
       </div>
-      <div class="italic text-sm text-gray-300">"{{ userQuestion }}"</div>
+      <div class="italic text-sm text-gray-300 break-words whitespace-normal max-w-full">
+        "{{ userQuestion }}"
+      </div>
     </div>
 
-    <!-- Confirm Button shown after enough cards chosen -->
+    <!-- Confirm Button -->
     <div
       v-if="isReadyToConfirm"
-      class="absolute top-4 left-1/2 transform -translate-x-1/2 z-10"
+      class="absolute top-16 left-1/2 transform -translate-x-1/2 z-10"
     >
       <button
         @click="() => (isConfirmed = true)"
@@ -492,7 +496,7 @@ function chooseCard(card: CollectedCard) {
 
     <div
       v-if="spreadMode && questionConfirmed && hasCutFinished && !isConfirmed"
-      class="absolute inset-0 pt-20 pb-4 px-2 z-0 overflow-y-auto grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 xl:grid-cols-13 gap-2"
+      class="w-full pt-8 pb-4 px-2 overflow-y-auto grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 xl:grid-cols-13 gap-2"
     >
       <div
         v-for="card in sortedCards"
@@ -507,7 +511,6 @@ function chooseCard(card: CollectedCard) {
           }"
         >
           <CardBack />
-
           <ChosenOverlay :card="card" :list="chosenCards" />
         </div>
       </div>
