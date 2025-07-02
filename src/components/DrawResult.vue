@@ -75,6 +75,7 @@ function finalOrientation(card: DrawnCard, index: number): 'upright' | 'reversed
           <!-- Rotate Orientation Button -->
           <div v-if="!revealedIndexes.includes(index)" class="absolute top-1 left-1 z-10">
             <button
+              aria-label="Rotate"
               @click.stop="rotateOrientation(index)"
               class="text-sm bg-yellow-400 text-black px-2 py-1 rounded hover:bg-yellow-300"
             >

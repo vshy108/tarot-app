@@ -26,6 +26,7 @@ function drawCards() {
 
     <div class="flex justify-center">
       <button
+        aria-label="Draw cards"
         @click="drawCards"
         class="bg-pink-600 hover:bg-pink-500 text-white px-6 py-2 rounded-lg shadow-lg transition-all"
       >
@@ -34,9 +35,6 @@ function drawCards() {
     </div>
 
     <!-- Render reusable result view -->
-    <DrawResult
-      v-if="drawnCards.length"
-      :cards="drawnCards"
-    />
+    <DrawResult v-if="drawnCards.length" :cards="drawnCards" />
   </div>
 </template>
