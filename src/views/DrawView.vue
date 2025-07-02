@@ -163,18 +163,13 @@ function collectCardsToDeck() {
     return a.x - b.x;
   });
 
-  sortedCards.value = sorted.map(card => {
-    const isReversed = isCardReversed(card.rotate);
-    return {
-      ...card,
-      orientation: isReversed ? "reversed" : "upright",
-    }
-  });
+  sortedCards.value = sorted as CollectedCard[];
 
-  const lastIndex = sorted.length - 1;
+  const lastIndex = sortedCards.value.length - 1;
 
-  sorted.forEach((card, index) => {
+  sortedCards.value.forEach((card, index) => {
     const isReversed = isCardReversed(card.rotate);
+    // NOTE: gsap mutate the card value
     gsap.to(card, {
       x: deckTarget.x,
       y: isReversed ? deckTarget.y + cardHeight : deckTarget.y,
