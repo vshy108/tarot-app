@@ -10,9 +10,7 @@ const props = defineProps<{
   cards: DrawnCard[]
 }>()
 
-// cards that are rendered on screen
 const cardsToRender = ref<DrawnCard[]>([])
-
 const revealedIndexes = ref<number[]>([])
 const selectedCard = ref<DrawnCard | null>(null)
 const rotateCounts = ref<number[]>([])
@@ -20,7 +18,6 @@ const rotateCounts = ref<number[]>([])
 watch(
   () => props.cards,
   async (newCards, oldCards) => {
-    console.log('newCards', newCards)
     if (oldCards?.length) {
       await gsap.to('.card', {
         x: 100,
@@ -31,7 +28,6 @@ watch(
       })
     }
 
-    // Clear cards from screen first (prevent flicker)
     cardsToRender.value = []
     revealedIndexes.value = []
     rotateCounts.value = Array(newCards.length).fill(0)
@@ -39,12 +35,9 @@ watch(
 
     await nextTick()
 
-    // Set new cards
     cardsToRender.value = newCards
 
     await nextTick()
-
-    // Animate new cards in
     gsap.fromTo(
       '.card',
       { x: -100, opacity: 0 },
@@ -72,6 +65,7 @@ function openModal(card: DrawnCard) {
 
 function rotateOrientation(index: number) {
   rotateCounts.value[index]++
+
   const cardBackEl = document.querySelector(`.card-back-${index}`) as HTMLElement
   if (cardBackEl) {
     gsap.to(cardBackEl, {
@@ -79,10 +73,6 @@ function rotateOrientation(index: number) {
       duration: 0.6,
       ease: 'power2.inOut'
     })
-  }
-  const card = cardsToRender.value[index]
-  if (card) {
-    card.orientation = card.orientation === 'upright' ? 'reversed' : 'upright'
   }
 }
 
@@ -118,7 +108,7 @@ function finalOrientation(card: DrawnCard, index: number): 'upright' | 'reversed
           <span v-if="rotateCounts[index] % 2 === 1">🔁</span>
         </div>
 
-        <!-- Card -->
+        <!-- Card Display -->
         <div class="w-full h-full" @click="revealCard(index)">
           <!-- Front -->
           <img
@@ -134,11 +124,14 @@ function finalOrientation(card: DrawnCard, index: number): 'upright' | 'reversed
             ]"
             @click.stop="openModal(card)"
           />
+
           <!-- Back -->
           <CardBack
             v-else
             :class="`card-back-${index} w-full h-full object-contain rounded-xl shadow-md`"
           />
+
+          <!-- Overlay -->
           <ChosenOverlay
             :card="card"
             :list="cardsToRender"
@@ -149,6 +142,7 @@ function finalOrientation(card: DrawnCard, index: number): 'upright' | 'reversed
       </div>
     </div>
 
+    <!-- Modal -->
     <CardModal
       v-if="selectedCard"
       :card="{
