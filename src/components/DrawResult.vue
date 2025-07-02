@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, nextTick, computed } from 'vue'
+import { ref, nextTick, computed, watch } from 'vue'
 import { type DrawnCard } from '@/composables/useDeck'
 import CardModal from '@/components/CardModal.vue'
 import CardBack from '@/components/CardBack.vue'
@@ -11,7 +11,17 @@ const props = defineProps<{
 
 const revealedIndexes = ref<number[]>([])
 const selectedCard = ref<DrawnCard | null>(null)
-const rotateCounts = ref<number[]>(Array(props.cards.length).fill(0))
+const rotateCounts = ref<number[]>([])
+
+watch(
+  () => props.cards,
+  (newCards) => {
+    revealedIndexes.value = []
+    rotateCounts.value = Array(newCards.length).fill(0)
+    selectedCard.value = null
+  },
+  { immediate: true }
+)
 
 function revealCard(index: number) {
   if (!revealedIndexes.value.includes(index)) {
