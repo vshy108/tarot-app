@@ -291,7 +291,7 @@ function chooseCard(card: CollectedCard) {
 
 <template>
   <div
-    class="flex flex-col items-center w-full min-h-screen overflow-x-hidden bg-gradient-to-b from-purple-950 to-indigo-950"
+    class="flex flex-col items-center w-full min-h-[calc(100vh-52px)] overflow-x-hidden bg-gradient-to-b from-purple-950 to-indigo-950"
   >
     <!-- Shuffle and Cut Controls -->
     <div

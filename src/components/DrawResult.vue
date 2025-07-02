@@ -63,7 +63,7 @@ function finalOrientation(card: DrawnCard, index: number): 'upright' | 'reversed
 </script>
 
 <template>
-  <div class="min-h-screen flex flex-col items-center pt-10 text-white px-4">
+  <div class="flex flex-col items-center pt-10 text-white px-4">
     <!-- Card Deck -->
     <div class="w-full flex justify-center">
       <div class="flex flex-wrap justify-center gap-6 max-w-screen-lg">
