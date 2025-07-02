@@ -467,7 +467,10 @@ function chooseCard(card: CollectedCard) {
     </div>
 
     <!-- Spread info + question -->
-    <div v-if="isWaitingForCardSelection" class="text-white text-center mb-4 space-y-2">
+    <div
+      v-if="isWaitingForCardSelection || isConfirmed"
+      class="text-white text-center mb-4 space-y-2"
+    >
       <div class="text-xl font-semibold">
         {{ spreadMode === "1" ? "1 Card Spread" : "3 Cards Spread" }}
       </div>
