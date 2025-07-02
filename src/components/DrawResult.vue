@@ -15,6 +15,11 @@ const revealedIndexes = ref<number[]>([])
 const selectedCard = ref<DrawnCard | null>(null)
 const rotateCounts = ref<number[]>([])
 
+const cardRemarks = ref<Record<string, string>>({})
+const showRemarkInputs = ref<Record<string, boolean>>({})
+const spreadSummary = ref('')
+const showSummaryInput = ref(false)
+
 watch(
   () => props.cards,
   async (newCards, oldCards) => {
@@ -32,6 +37,10 @@ watch(
     revealedIndexes.value = []
     rotateCounts.value = Array(newCards.length).fill(0)
     selectedCard.value = null
+    cardRemarks.value = {}
+    showRemarkInputs.value = {}
+    spreadSummary.value = ''
+    showSummaryInput.value = false
 
     await nextTick()
 
@@ -82,6 +91,22 @@ function finalOrientation(card: DrawnCard, index: number): 'upright' | 'reversed
     ? card.orientation === 'reversed' ? 'upright' : 'reversed'
     : card.orientation
 }
+
+function saveSpreadToLocalStorage() {
+  const payload = {
+    cards: cardsToRender.value.map((card, index) => ({
+      id: card.id,
+      name: card.name,
+      orientation: finalOrientation(card, index),
+      remark: cardRemarks.value[card.id] || '',
+    })),
+    summary: spreadSummary.value,
+    timestamp: new Date().toISOString(),
+  }
+
+  localStorage.setItem('spread-' + payload.timestamp, JSON.stringify(payload))
+  alert('Spread saved locally!')
+}
 </script>
 
 <template>
@@ -90,7 +115,7 @@ function finalOrientation(card: DrawnCard, index: number): 'upright' | 'reversed
       <div
         v-for="(card, index) in cardsToRender"
         :key="card.id"
-        class="card relative w-32 h-48 cursor-pointer flex items-center justify-center"
+        class="card relative w-32 h-48 cursor-pointer flex flex-col items-center justify-start"
       >
         <!-- Rotate Orientation Button -->
         <div v-if="!revealedIndexes.includes(index)" class="absolute top-1 left-1 z-10">
@@ -108,9 +133,8 @@ function finalOrientation(card: DrawnCard, index: number): 'upright' | 'reversed
           <span v-if="rotateCounts[index] % 2 === 1">🔁</span>
         </div>
 
-        <!-- Card Display -->
+        <!-- Card -->
         <div class="w-full h-full" @click="revealCard(index)">
-          <!-- Front -->
           <img
             v-if="revealedIndexes.includes(index)"
             :src="card.image"
@@ -124,14 +148,10 @@ function finalOrientation(card: DrawnCard, index: number): 'upright' | 'reversed
             ]"
             @click.stop="openModal(card)"
           />
-
-          <!-- Back -->
           <CardBack
             v-else
             :class="`card-back-${index} w-full h-full object-contain rounded-xl shadow-md`"
           />
-
-          <!-- Overlay -->
           <ChosenOverlay
             :card="card"
             :list="cardsToRender"
@@ -139,6 +159,53 @@ function finalOrientation(card: DrawnCard, index: number): 'upright' | 'reversed
             :hiddenIndexes="revealedIndexes"
           />
         </div>
+
+        <!-- Remark Button & Input -->
+        <div class="mt-2 w-full text-center">
+          <button
+            class="text-xs bg-blue-500 px-2 py-1 rounded hover:bg-blue-400"
+            @click="showRemarkInputs[card.id] = !showRemarkInputs[card.id]"
+          >
+            {{ showRemarkInputs[card.id] ? "Hide Remark" : "Add Remark" }}
+          </button>
+
+          <div v-if="showRemarkInputs[card.id]" class="mt-1">
+            <textarea
+              v-model="cardRemarks[card.id]"
+              class="w-full text-black text-xs p-1 rounded"
+              rows="2"
+              placeholder="Enter remark for this card"
+            />
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Spread Summary Input -->
+    <div class="mt-10 w-full max-w-md mx-auto text-center">
+      <button
+        class="bg-green-600 px-4 py-2 rounded hover:bg-green-500"
+        @click="showSummaryInput = !showSummaryInput"
+      >
+        {{ showSummaryInput ? "Hide Summary" : "Add Spread Summary" }}
+      </button>
+
+      <div v-if="showSummaryInput" class="mt-3">
+        <textarea
+          v-model="spreadSummary"
+          class="w-full text-black text-sm p-2 rounded"
+          rows="3"
+          placeholder="Write your overall interpretation of this spread..."
+        />
+      </div>
+
+      <div v-if="showSummaryInput || Object.keys(cardRemarks).length" class="mt-4">
+        <button
+          class="bg-yellow-500 px-4 py-2 rounded hover:bg-yellow-400"
+          @click="saveSpreadToLocalStorage"
+        >
+          Save Spread to Local DB
+        </button>
       </div>
     </div>
 
