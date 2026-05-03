@@ -13,6 +13,7 @@ const { isStopping, isAnimating, triggerSmoothStop } = useSmoothStop(10);
 const isShuffling = ref(false);
 const shuffleDirection = ref<"clockwise" | "anticlockwise" | null>(null);
 const hasCollectedToDeck = ref(false);
+const startCollectedToDeck = ref(false);
 const hasCutFinished = ref(false);
 const spreadMode = ref<"1" | "3" | null>(null);
 const userQuestion = ref("");
@@ -43,7 +44,11 @@ const isCutting = ref(false);
 let cutCooldownTimer: ReturnType<typeof setTimeout> | null = null;
 let cutAnimationTimeout: ReturnType<typeof setTimeout> | null = null;
 let cutToastTimeout: ReturnType<typeof setTimeout> | null = null;
-const deckTarget = { x: -40, y: -64 };
+const cardWidth = 40;
+const cardHeight = 64;
+const deckTarget = { x: -cardWidth, y: -cardHeight };
+
+const sortedCards = ref<any[]>([]); // shared reactive array
 
 const isWaitingForCardSelection = computed(() => {
   if (
@@ -59,6 +64,16 @@ const isWaitingForCardSelection = computed(() => {
     (spreadMode.value === "3" && chosenCards.value.length !== 3)
   );
 });
+
+function isCardReversed(angle: number): boolean {
+  const normalized = ((angle % 360) + 360) % 360;
+
+  if (normalized >= 90 && normalized < 180 + 90) {
+    return true;
+  }
+
+  return false; // Elsewhere
+}
 
 const isReadyToConfirm = computed(() => {
   if (
@@ -80,6 +95,7 @@ const scatteredCards = ref(
     const angle = Math.random() * 360 * (Math.PI / 180);
     const radius = 100 + Math.random() * 150;
     const speed = 0.005 + Math.random() * 0.01;
+    const rotate = Math.random() * 360 - 180;
     return {
       ...card,
       angle,
@@ -87,8 +103,8 @@ const scatteredCards = ref(
       speed,
       x: Math.cos(angle) * radius,
       y: Math.sin(angle) * radius,
-      rotate: Math.random() * 360 - 180,
-      isReversed: false,
+      rotate,
+      isReversed: null,
       revealed: false,
     };
   })
@@ -139,23 +155,34 @@ onUnmounted(() => {
 function collectCardsToDeck() {
   if (isShuffling.value) return;
 
+  startCollectedToDeck.value = true;
+
   const sorted = scatteredCards.value.toSorted((a, b) => {
     if (b.y !== a.y) return a.y - b.y;
     return a.x - b.x;
   });
 
+  sortedCards.value = sorted;
+
+  const lastIndex = sorted.length - 1;
+
   sorted.forEach((card, index) => {
+    const isReversed = isCardReversed(card.rotate);
     gsap.to(card, {
       x: deckTarget.x,
-      y: deckTarget.y,
-      rotate: 0,
+      y: isReversed ? deckTarget.y + cardHeight : deckTarget.y,
+      rotate: isReversed ? 180 : 0,
+      isReversed,
       duration: 0.5,
       delay: index * 0.03,
       ease: "power2.inOut",
+      onComplete: () => {
+        if (index === lastIndex) {
+          hasCollectedToDeck.value = true;
+        }
+      },
     });
   });
-
-  hasCollectedToDeck.value = true;
 }
 
 const clamp = (val: number, min: number, max: number) =>
@@ -169,64 +196,67 @@ function cutDeck() {
     .map((v) => clamp(v, 1, 78))
     .toSorted((a, b) => a - b);
 
-  const sorted = scatteredCards.value.toSorted((a, b) => {
-    if (b.y !== a.y) return a.y - b.y;
-    return a.x - b.x;
+  const portion = sortedCards.value.slice(from - 1, to);
+  const rest = sortedCards.value.slice(0, from - 1).concat(sortedCards.value.slice(to));
+  const cutOffset = 80;
+
+  const timeline = gsap.timeline({
+    onComplete: () => {
+      // Reassemble and animate into deck
+      const reassembled =
+        cutPosition.value === "top" ? [...portion, ...rest] : [...rest, ...portion];
+      sortedCards.value = reassembled;
+
+      const collectTimeline = gsap.timeline({
+        onComplete: () => {
+          cutCount.value += 1;
+          showCutInfoToast(from, to, cutPosition.value);
+          isCutting.value = false;
+        },
+      });
+
+      sortedCards.value.forEach((card, index) => {
+        collectTimeline.to(
+          card,
+          {
+            x: deckTarget.x,
+            y: deckTarget.y,
+            rotate: 0,
+            duration: 0.5,
+            delay: index * 0.03,
+            ease: "power2.inOut",
+          },
+          0
+        ); // all delays relative to the start of this timeline
+      });
+    },
   });
 
-  const portion = sorted.slice(from - 1, to);
-  const rest = sorted.slice(0, from - 1).concat(sorted.slice(to));
-
-  // Animate cut separation
-  const cutOffset = 80;
   portion.forEach((card, i) => {
-    gsap.to(card, {
-      y: card.y - (cutPosition.value === "top" ? cutOffset : -cutOffset),
-      duration: 0.3,
-      delay: i * 0.01,
-      ease: "power1.out",
-    });
+    timeline.to(
+      card,
+      {
+        y: card.y - (cutPosition.value === "top" ? cutOffset : -cutOffset),
+        duration: 0.3,
+        delay: i * 0.01,
+        ease: "power1.out",
+      },
+      0
+    ); // sync start
   });
 
   rest.forEach((card, i) => {
-    gsap.to(card, {
-      y: card.y + (cutPosition.value === "top" ? cutOffset : -cutOffset),
-      duration: 0.3,
-      delay: i * 0.005,
-      ease: "power1.out",
-    });
+    timeline.to(
+      card,
+      {
+        y: card.y + (cutPosition.value === "top" ? cutOffset : -cutOffset),
+        duration: 0.3,
+        delay: i * 0.005,
+        ease: "power1.out",
+      },
+      0
+    ); // sync start
   });
-
-  if (cutAnimationTimeout) {
-    clearTimeout(cutAnimationTimeout);
-  }
-
-  cutAnimationTimeout = setTimeout(() => {
-    const reassembled =
-      cutPosition.value === "top" ? [...portion, ...rest] : [...rest, ...portion];
-
-    scatteredCards.value = reassembled;
-
-    scatteredCards.value.forEach((card, index) => {
-      gsap.to(card, {
-        x: deckTarget.x,
-        y: deckTarget.y,
-        rotate: 0,
-        duration: 0.5,
-        delay: index * 0.03,
-        ease: "power2.inOut",
-      });
-    });
-
-    cutCount.value += 1;
-    showCutInfoToast(from, to, cutPosition.value);
-
-    if (cutCooldownTimer) clearTimeout(cutCooldownTimer);
-    cutCooldownTimer = setTimeout(() => {
-      isCutting.value = false;
-      cutCooldownTimer = null;
-    }, 1000);
-  }, 400); // wait for first animation to finish
 }
 
 function finishCut() {
@@ -267,7 +297,7 @@ function toggleOrientation(card: any) {
       class="absolute top-4 left-1/2 transform -translate-x-1/2 z-10 flex flex-wrap gap-4 justify-center"
     >
       <button
-        v-if="!isShuffling && !hasCollectedToDeck"
+        v-if="!isShuffling && !startCollectedToDeck"
         :disabled="isStopping"
         @click="() => startShuffle('anticlockwise')"
         class="px-4 py-2 bg-indigo-600 text-white rounded-xl hover:bg-indigo-700 transition disabled:opacity-50"
@@ -275,7 +305,7 @@ function toggleOrientation(card: any) {
         Shuffle Anticlockwise
       </button>
       <button
-        v-if="!isShuffling && !hasCollectedToDeck"
+        v-if="!isShuffling && !startCollectedToDeck"
         :disabled="isStopping"
         @click="() => startShuffle('clockwise')"
         class="px-4 py-2 bg-purple-600 text-white rounded-xl hover:bg-purple-700 transition disabled:opacity-50"
@@ -290,7 +320,7 @@ function toggleOrientation(card: any) {
         Stop Shuffle
       </button>
       <button
-        v-if="!isShuffling && scatteredCards.length && !hasCollectedToDeck"
+        v-if="!isShuffling && scatteredCards.length && !startCollectedToDeck"
         @click="collectCardsToDeck"
         class="px-4 py-2 bg-emerald-600 text-white rounded-xl hover:bg-emerald-700 transition"
       >
