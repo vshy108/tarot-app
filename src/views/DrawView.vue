@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import { ref, onMounted, nextTick } from 'vue'
+import { ref, nextTick } from 'vue'
 import { type DrawnCard, useDeck } from '@/composables/useDeck'
 import { gsap } from 'gsap'
 import CardModal from '@/components/CardModal.vue'
-import CardBack from '../components/CardBack.vue'
+import CardBack from '@/components/CardBack.vue'
 
 const fullDeck = ref(useDeck())
 const drawnCards = ref<DrawnCard[]>([])
@@ -54,12 +54,6 @@ function openModal(card: DrawnCard) {
 }
 </script>
 
-<style scoped>
-.card {
-  perspective: 1000px;
-}
-</style>
-
 <template>
   <div class="min-h-screen bg-gradient-to-b from-purple-800 to-indigo-900 text-white p-8">
     <h1 class="text-3xl font-bold text-center mb-8">Draw Your Cards</h1>
@@ -77,14 +71,14 @@ function openModal(card: DrawnCard) {
       <div
         v-for="(card, index) in drawnCards"
         :key="card.id"
-        class="card relative w-32 h-48 cursor-pointer transition-transform duration-300 hover:scale-105"
+        class="card relative w-32 h-48 cursor-pointer hover:scale-105 flex items-center justify-center"
         @click="revealCard(index)"
       >
         <img
           v-if="revealedIndexes.includes(index)"
           :src="card.image"
           alt="Card"
-          class="w-full h-full object-cover rounded-xl shadow-md"
+          class="w-full h-full object-contain rounded-xl shadow-md hover:ring-4 hover:ring-yellow-300"
           :class="{ 'rotate-180': card.orientation === 'reversed' }"
           @click.stop="openModal(card)"
         />
@@ -92,6 +86,16 @@ function openModal(card: DrawnCard) {
       </div>
     </div>
 
-    <CardModal v-if="selectedCard" :card="selectedCard" @close="selectedCard = null" />
+    <CardModal
+      v-if="selectedCard"
+      :card="selectedCard"
+      @close="selectedCard = null"
+    />
   </div>
 </template>
+
+<style scoped>
+.card {
+  perspective: 1000px;
+}
+</style>
