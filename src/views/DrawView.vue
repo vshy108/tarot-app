@@ -16,6 +16,7 @@ const hasCutFinished = ref(false);
 const spreadMode = ref<"1" | "3" | null>(null);
 const userQuestion = ref("");
 const showQuestionInput = ref(false);
+const questionConfirmed = ref(false);
 const chosenCards = ref<any[]>([]);
 
 const cutStart = ref(1);
@@ -152,6 +153,12 @@ function cutDeck() {
 function finishCut() {
   if (cutCooldownTimer) clearTimeout(cutCooldownTimer);
   hasCutFinished.value = true;
+}
+
+function confirmQuestion() {
+  if (userQuestion.value.trim()) {
+    questionConfirmed.value = true;
+  }
 }
 
 function chooseCard(card: any) {
@@ -291,19 +298,18 @@ function toggleOrientation(card: any) {
       </button>
     </div>
 
-    <div
-      v-if="spreadMode && showQuestionInput && !userQuestion"
-      class="absolute inset-0 z-10 flex flex-col items-center justify-center text-white space-y-2"
-    >
+    <!-- Spread Question Input -->
+    <div v-if="spreadMode && showQuestionInput && !questionConfirmed" class="absolute inset-0 z-10 flex flex-col items-center justify-center text-white space-y-4">
       <p class="text-center">Enter your question:</p>
       <input
         v-model="userQuestion"
         placeholder="What is your question?"
-        class="w-96 px-4 py-2 rounded-xl text-black"
+        class="w-96 px-4 py-2 rounded-xl text-white bg-black placeholder-white border border-white"
       />
+      <button @click="confirmQuestion" class="px-4 py-2 bg-green-600 rounded-xl">OK</button>
     </div>
 
-        <!-- Scattered display before Done Cut -->
+    <!-- Scattered display before Done Cut -->
     <div
       v-if="!hasCutFinished"
       class="absolute left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2"
@@ -321,7 +327,7 @@ function toggleOrientation(card: any) {
     </div>
 
     <div
-      v-if="spreadMode && userQuestion && hasCutFinished"
+      v-if="spreadMode && questionConfirmed && hasCutFinished"
       class="absolute inset-0 grid grid-cols-6 gap-[2px] p-2 z-0"
     >
       <div
