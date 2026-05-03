@@ -128,7 +128,7 @@ onUnmounted(() => {
   if (cutCooldownTimer) clearTimeout(cutCooldownTimer);
 });
 
-const deckTarget = { x: 0, y: 0 };
+const deckTarget = { x: -window.innerWidth / 2, y: -window.innerHeight / 2 };
 
 function collectCardsToDeck() {
   if (isShuffling.value) return;
@@ -247,7 +247,7 @@ function toggleOrientation(card: any) {
         @click="collectCardsToDeck"
         class="px-4 py-2 bg-emerald-600 text-white rounded-xl hover:bg-emerald-700 transition"
       >
-        Back to Deck
+        Reassemble
       </button>
       <template v-if="hasCollectedToDeck">
         <input
