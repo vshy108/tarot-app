@@ -18,7 +18,7 @@ const cutEnd = ref(1)
 const cutCount = ref(0)
 const cutPosition = ref<'top' | 'bottom'>('top')
 
-// Toast logic
+// Toast state
 const showCutToast = ref(false)
 const cutToastMessage = ref('')
 function showCutInfoToast(start: number, end: number, position: string) {
@@ -28,6 +28,10 @@ function showCutInfoToast(start: number, end: number, position: string) {
     showCutToast.value = false
   }, 3000)
 }
+
+// Cut button cooldown
+const isCutting = ref(false)
+let cutCooldownTimer: ReturnType<typeof setTimeout> | null = null
 
 const scatteredCards = ref(
   fullDeck.value.map((card) => {
@@ -70,7 +74,6 @@ function stopShuffle(immediate = false) {
   isShuffling.value = false
   shuffleDirection.value = null
   stopTicker()
-
   if (!immediate) {
     triggerSmoothStop()
   } else {
@@ -78,7 +81,10 @@ function stopShuffle(immediate = false) {
   }
 }
 
-onUnmounted(() => stopShuffle(true))
+onUnmounted(() => {
+  stopShuffle(true)
+  if (cutCooldownTimer) clearTimeout(cutCooldownTimer)
+})
 
 const deckTarget = { x: 0, y: 0 }
 
@@ -105,6 +111,9 @@ function collectCardsToDeck() {
 }
 
 function cutDeck() {
+  if (isCutting.value) return
+  isCutting.value = true
+
   const rawStart = Math.max(1, Math.min(78, cutStart.value))
   const rawEnd = Math.max(1, Math.min(78, cutEnd.value))
   const from = Math.min(rawStart, rawEnd)
@@ -123,6 +132,12 @@ function cutDeck() {
 
   cutCount.value += 1
   showCutInfoToast(from, to, cutPosition.value)
+
+  if (cutCooldownTimer) clearTimeout(cutCooldownTimer)
+  cutCooldownTimer = setTimeout(() => {
+    isCutting.value = false
+    cutCooldownTimer = null
+  }, 1000)
 }
 </script>
 
@@ -189,10 +204,12 @@ function cutDeck() {
           <option value="bottom">To Bottom</option>
         </select>
         <button
+          :disabled="isCutting"
           @click="cutDeck"
-          class="px-4 py-2 bg-yellow-500 text-white rounded-xl hover:bg-yellow-600 transition"
+          class="px-4 py-2 bg-yellow-500 text-white rounded-xl hover:bg-yellow-600 transition disabled:opacity-50"
         >
-          Cut ({{ cutCount }})
+          <span v-if="isCutting">Cutting...</span>
+          <span v-else>Cut ({{ cutCount }})</span>
         </button>
         <button
           class="px-4 py-2 bg-gray-500 text-white rounded-xl hover:bg-gray-600 transition"
