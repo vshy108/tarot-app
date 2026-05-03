@@ -2,12 +2,57 @@ import { tarotDeck } from '@/data/tarotDeck'
 import type { TarotCard } from '@/data/tarotDeck'
 
 export interface TarotCardWithId extends TarotCard {
-    id: string
+    id: string,
+    type: 'Major' | 'Minor'
+    suit?: 'Cups' | 'Swords' | 'Wands' | 'Pentacles'
+    rank?: 'Ace' | '2' | '3' | '4' | '5' | '6' | '7' | '8' | '9' | '10' | 'Page' | 'Knight' | 'Queen' | 'King'
 }
 
 export function useTarotDeck(): TarotCardWithId[] {
-    return Object.entries(tarotDeck).map(([id, card]) => ({
-        id,
-        ...card,
-    }))
+    return Object.entries(tarotDeck).map(([id, card]) => {
+        const isMajor = id.startsWith('MAJ');
+
+        if (isMajor) {
+            return {
+                id,
+                ...card,
+                type: 'Major',
+            };
+        }
+
+        const suitCode = id.split('-')[0];
+        const rankCode = id.split('-')[1];
+
+        const suitMap: Record<string, TarotCardWithId['suit']> = {
+            W: 'Wands',
+            C: 'Cups',
+            S: 'Swords',
+            P: 'Pentacles',
+        };
+
+        const rankMap: Record<string, TarotCardWithId['rank']> = {
+            '01': 'Ace',
+            '02': '2',
+            '03': '3',
+            '04': '4',
+            '05': '5',
+            '06': '6',
+            '07': '7',
+            '08': '8',
+            '09': '9',
+            '10': '10',
+            'PAGE': 'Page',
+            'KNIGHT': 'Knight',
+            'QUEEN': 'Queen',
+            'KING': 'King',
+        };
+
+        return {
+            id,
+            ...card,
+            type: 'Minor',
+            suit: suitMap[suitCode],
+            rank: rankMap[rankCode],
+        };
+    });
 }
