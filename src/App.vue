@@ -33,6 +33,12 @@
             >Draw</RouterLink
           >
           <RouterLink
+            to="/simple-draw"
+            class="hover:text-pink-400"
+            active-class="text-pink-500 font-semibold"
+            >Simple Draw</RouterLink
+          >
+          <RouterLink
             to="/cards"
             class="hover:text-pink-400"
             active-class="text-pink-500 font-semibold"
@@ -68,6 +74,12 @@
         >
         <RouterLink to="/draw" class="block hover:text-pink-400" @click="isOpen = false"
           >Draw</RouterLink
+        >
+        <RouterLink
+          to="/simple-draw"
+          class="block hover:text-pink-400"
+          @click="isOpen = false"
+          >Simple Draw</RouterLink
         >
         <RouterLink to="/cards" class="block hover:text-pink-400" @click="isOpen = false"
           >All Cards</RouterLink

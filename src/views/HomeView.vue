@@ -9,12 +9,21 @@
       inspiration, let the cards reveal what the universe has in store for you.
     </p>
 
-    <RouterLink
-      to="/draw"
-      class="inline-block bg-pink-600 hover:bg-pink-500 text-white text-lg font-semibold px-6 py-3 rounded-xl shadow-lg transition-all"
-    >
-      🔮 Draw Your Cards
-    </RouterLink>
+    <div class="flex flex-col sm:flex-row gap-4">
+      <RouterLink
+        to="/draw"
+        class="inline-block bg-pink-600 hover:bg-pink-500 text-white text-lg font-semibold px-6 py-3 rounded-xl shadow-lg transition-all"
+      >
+        🌟 Begin Advanced Draw Journey
+      </RouterLink>
+
+      <RouterLink
+        to="/simple-draw"
+        class="inline-block bg-purple-600 hover:bg-purple-500 text-white text-lg font-semibold px-6 py-3 rounded-xl shadow-lg transition-all"
+      >
+        🃏 Simple 3 Card Draw
+      </RouterLink>
+    </div>
 
     <div class="mt-16 grid grid-cols-1 md:grid-cols-2 gap-6 max-w-4xl w-full">
       <div class="bg-white/10 border border-white/20 p-6 rounded-lg shadow-sm">
@@ -36,5 +45,5 @@
 </template>
 
 <script setup lang="ts">
-// No logic needed for this static view
+// Static content, no logic required here
 </script>
