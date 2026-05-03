@@ -24,7 +24,7 @@ const isConfirmed = ref(false);
 const chosenCards = ref<any[]>([]);
 
 const cutStart = ref(1);
-const cutEnd = ref(1);
+const cutEnd = ref(78);
 const cutCount = ref(0);
 const cutPosition = ref<"top" | "bottom">("top");
 
