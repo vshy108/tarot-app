@@ -59,3 +59,16 @@ export function useDeck(): CardWithId[] {
         }
     })
 }
+
+export interface ScatteredCard extends CardWithId {
+    angle: number
+    radius: number
+    speed: number
+    x: number
+    y: number
+    rotate: number
+    orientation: 'upright' | 'reversed' | null
+    revealed: boolean
+}
+
+export interface CollectedCard extends DrawnCard, Omit<ScatteredCard, keyof CardWithId | 'orientation'> { }
