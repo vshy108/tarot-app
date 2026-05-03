@@ -63,11 +63,13 @@ function openModal(card: DrawnCard) {
 
 function rotateOrientation(index: number) {
   rotateCounts.value[index]++
-  const cardEl = document.querySelector(`.card-front-${index}`) as HTMLElement
-  if (cardEl) {
-    gsap.to(cardEl, {
-      rotateY: '+=180',
-      duration: 0.5,
+
+  // Animate the card back before reveal
+  const cardBackEl = document.querySelector(`.card-back-${index}`) as HTMLElement
+  if (cardBackEl) {
+    gsap.to(cardBackEl, {
+      rotateZ: '+=180',
+      duration: 0.6,
       ease: 'power2.inOut'
     })
   }
@@ -136,7 +138,10 @@ function finalOrientation(card: DrawnCard, index: number): 'upright' | 'reversed
             ]"
             @click.stop="openModal(card)"
           />
-          <CardBack v-else />
+          <CardBack
+            v-else
+            :class="`card-back-${index}`"
+          />
         </div>
       </div>
     </div>
@@ -159,6 +164,10 @@ function finalOrientation(card: DrawnCard, index: number): 'upright' | 'reversed
 
 <style scoped>
 .card {
-  perspective: 1000px;
+  /* no perspective needed for 2D */
+}
+.card-front {
+  backface-visibility: hidden;
+  transform-style: flat;
 }
 </style>
