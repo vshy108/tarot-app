@@ -63,59 +63,55 @@ function finalOrientation(card: DrawnCard, index: number): 'upright' | 'reversed
 </script>
 
 <template>
-  <div class="flex flex-col items-center pt-10 text-white px-4">
-    <!-- Card Deck -->
-    <div class="w-full flex justify-center">
-      <div class="flex flex-wrap justify-center gap-6 max-w-screen-lg">
-        <div
-          v-for="(card, index) in cards"
-          :key="card.id"
-          class="relative max-w-[8rem] aspect-[5/8] w-full cursor-pointer flex items-center justify-center"
-        >
-          <!-- Rotate Orientation Button -->
-          <div v-if="!revealedIndexes.includes(index)" class="absolute top-1 left-1 z-10">
-            <button
-              aria-label="Rotate"
-              @click.stop="rotateOrientation(index)"
-              class="text-sm bg-yellow-400 text-black px-2 py-1 rounded hover:bg-yellow-300"
-            >
-              Rotate
-            </button>
-          </div>
+  <div class="text-white p-4">
+    <div class="mt-10 flex flex-wrap justify-center gap-6 card-deck">
+      <div
+        v-for="(card, index) in cards"
+        :key="card.id"
+        class="card relative w-32 h-48 cursor-pointer flex items-center justify-center"
+      >
+        <!-- Rotate Orientation Button -->
+        <div v-if="!revealedIndexes.includes(index)" class="absolute top-1 left-1 z-10">
+          <button
+            aria-label="Rotate"
+            @click.stop="rotateOrientation(index)"
+            class="text-sm bg-yellow-400 text-black px-2 py-1 rounded hover:bg-yellow-300"
+          >
+            Rotate
+          </button>
+        </div>
 
-          <!-- Rotate Marker -->
-          <div class="absolute bottom-1 right-1 text-lg z-10">
-            <span v-if="rotateCounts[index] % 2 === 1">🔁</span>
-          </div>
+        <!-- Rotate Marker -->
+        <div class="absolute bottom-1 right-1 text-lg z-10">
+          <span v-if="rotateCounts[index] % 2 === 1">🔁</span>
+        </div>
 
-          <!-- Card -->
-          <div class="w-full h-full" @click="revealCard(index)">
-            <img
-              v-if="revealedIndexes.includes(index)"
-              :src="card.image"
-              :alt="card.name"
-              class="w-full h-full object-contain rounded-xl shadow-md hover:ring-4 hover:ring-yellow-300 transition-transform duration-300"
-              :class="[
-                `card-front-${index}`,
-                {
-                  'rotate-180': finalOrientation(card, index) === 'reversed',
-                },
-              ]"
-              @click.stop="openModal(card)"
-            />
-            <CardBack v-else :class="`card-back-${index}`" />
-            <ChosenOverlay
-              :card="card"
-              :list="cards"
-              :index="index"
-              :hiddenIndexes="revealedIndexes"
-            />
-          </div>
+        <!-- Card -->
+        <div class="w-full h-full" @click="revealCard(index)">
+          <img
+            v-if="revealedIndexes.includes(index)"
+            :src="card.image"
+            :alt="card.name"
+            class="w-full h-full object-contain rounded-xl shadow-md hover:ring-4 hover:ring-yellow-300 transition-transform duration-300"
+            :class="[
+              `card-front-${index}`,
+              {
+                'rotate-180': finalOrientation(card, index) === 'reversed',
+              },
+            ]"
+            @click.stop="openModal(card)"
+          />
+          <CardBack v-else :class="`card-back-${index}`" />
+          <ChosenOverlay
+            :card="card"
+            :list="cards"
+            :index="index"
+            :hiddenIndexes="revealedIndexes"
+          />
         </div>
       </div>
     </div>
 
-    <!-- Modal -->
     <CardModal
       v-if="selectedCard"
       :card="{
