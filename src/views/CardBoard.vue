@@ -32,7 +32,9 @@ function closeModal() {
 </script>
 
 <template>
-  <div class="flex flex-col items-center justify-center py-10 min-h-full bg-gradient-to-b from-purple-950 to-indigo-950">
+  <div
+    class="flex flex-col items-center justify-center py-10 min-h-full bg-gradient-to-b from-purple-950 to-indigo-950"
+  >
     <h2 class="text-4xl font-semibold mb-2">Major Arcana</h2>
     <!-- Top Half Arc for Major Arcana -->
     <div
@@ -56,6 +58,8 @@ function closeModal() {
         />
       </div>
     </div>
+
+    <h2 class="text-4xl font-semibold mb-2">Minor Arcana</h2>
 
     <!-- Grid for Minor Arcana -->
     <div class="space-y-8 px-4">
