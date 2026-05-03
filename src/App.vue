@@ -7,10 +7,14 @@
       <div class="max-w-7xl mx-auto px-4 py-3 flex justify-between items-center">
         <RouterLink
           to="/"
-          class="flex items-center space-x-2 text-xl font-bold tracking-wide hover:text-pink-400 transition"
+          class="flex items-center space-x-2 text-xl font-bold tracking-wide hover:text-pink-400 transition-transform hover:scale-105 group"
         >
-          <span>🔮</span>
-          <span>Tarot App</span>
+          <span class="animate-pulse">🔮</span>
+          <span
+            class="relative after:absolute after:inset-0 after:from-white/0 after:via-white/40 after:to-white/0 after:translate-x-[-100%] group-hover:after:animate-shimmer"
+          >
+            Tarot App
+          </span>
         </RouterLink>
 
         <!-- Desktop Nav -->

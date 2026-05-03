@@ -31,13 +31,14 @@
 </template>
 
 <script setup lang="ts">
-import { defineProps, defineEmits } from 'vue'
 import { type TarotCardWithId } from '@/composables/useTarotDeck'
 
+// [@vue/compiler-sfc] defineProps is a compiler macro and no longer needs to be imported
 const props = defineProps<{
   card: TarotCardWithId
 }>()
 
+// [@vue/compiler-sfc] defineEmits is a compiler macro and no longer needs to be imported
 const emit = defineEmits<{
   (e: 'close'): void
 }>()
@@ -46,3 +47,4 @@ function close() {
   emit('close')
 }
 </script>
+
