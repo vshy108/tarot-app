@@ -16,8 +16,12 @@
         <img
           :src="card.image"
           :alt="card.name"
-          class="w-40 h-64 object-cover rounded-lg shadow-md mb-4"
+          class="w-40 h-64 object-cover rounded-lg shadow-md mb-2 transition-transform duration-300"
+          :class="{ 'rotate-180': card.orientation === 'reversed' }"
         />
+        <span class="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-2">
+          {{ card.orientation }}
+        </span>
 
         <h2 class="text-2xl font-semibold mb-2 text-center">{{ card.name }}</h2>
         <p class="text-gray-700 text-sm text-justify whitespace-pre-line">
@@ -31,12 +35,10 @@
 <script setup lang="ts">
 import { type CardWithId } from '@/composables/useDeck'
 
-// [@vue/compiler-sfc] defineProps is a compiler macro and no longer needs to be imported
 const props = defineProps<{
-  card: CardWithId
+  card: CardWithId & { orientation?: 'upright' | 'reversed' }
 }>()
 
-// [@vue/compiler-sfc] defineEmits is a compiler macro and no longer needs to be imported
 const emit = defineEmits<{
   (e: 'close'): void
 }>()
