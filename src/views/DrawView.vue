@@ -9,6 +9,7 @@ const fullDeck = ref(useDeck())
 const drawnCards = ref<DrawnCard[]>([])
 const revealedIndexes = ref<number[]>([])
 const selectedCard = ref<DrawnCard | null>(null)
+const rotateCounts = ref<number[]>([])
 
 const numberOfCardsToDraw = 3
 
@@ -16,6 +17,7 @@ function drawCards() {
   drawnCards.value = []
   revealedIndexes.value = []
   selectedCard.value = null
+  rotateCounts.value = []
 
   gsap.to('.card-deck', {
     rotateY: 20,
@@ -29,6 +31,7 @@ function drawCards() {
         ...card,
         orientation: Math.random() > 0.5 ? 'upright' : 'reversed'
       }))
+      rotateCounts.value = Array(numberOfCardsToDraw).fill(0)
 
       nextTick(() => {
         gsap.from('.card', {
@@ -46,11 +49,38 @@ function drawCards() {
 function revealCard(index: number) {
   if (!revealedIndexes.value.includes(index)) {
     revealedIndexes.value.push(index)
+    gsap.fromTo(
+      `.card-front-${index}`,
+      { rotateY: 90 },
+      { rotateY: 0, duration: 0.4, ease: 'power2.out' }
+    )
   }
 }
 
 function openModal(card: DrawnCard) {
   selectedCard.value = card
+}
+
+function rotateOrientation(index: number) {
+  rotateCounts.value[index]++
+  const cardEl = document.querySelector(`.card-front-${index}`) as HTMLElement
+  if (cardEl) {
+    gsap.to(cardEl, {
+      rotateY: '+=180',
+      duration: 0.5,
+      ease: 'power2.inOut'
+    })
+  }
+
+  const card = drawnCards.value[index]
+  if (card) {
+    card.orientation = card.orientation === 'upright' ? 'reversed' : 'upright'
+  }
+}
+
+function finalOrientation(card: DrawnCard, index: number): 'upright' | 'reversed' {
+  const isRotated = rotateCounts.value[index] % 2 === 1
+  return (card.orientation === 'reversed') !== isRotated ? 'upright' : 'reversed'
 }
 </script>
 
@@ -71,24 +101,57 @@ function openModal(card: DrawnCard) {
       <div
         v-for="(card, index) in drawnCards"
         :key="card.id"
-        class="card relative w-32 h-48 cursor-pointer hover:scale-105 flex items-center justify-center"
-        @click="revealCard(index)"
+        class="card relative w-32 h-48 cursor-pointer flex items-center justify-center"
       >
-        <img
-          v-if="revealedIndexes.includes(index)"
-          :src="card.image"
-          alt="Card"
-          class="w-full h-full object-contain rounded-xl shadow-md hover:ring-4 hover:ring-yellow-300"
-          :class="{ 'rotate-180': card.orientation === 'reversed' }"
-          @click.stop="openModal(card)"
-        />
-        <CardBack v-else />
+        <!-- Rotate Orientation Button (before reveal) -->
+        <div
+          v-if="!revealedIndexes.includes(index)"
+          class="absolute top-1 left-1 z-10"
+        >
+          <button
+            @click.stop="rotateOrientation(index)"
+            class="text-sm bg-yellow-400 text-black px-2 py-1 rounded hover:bg-yellow-300"
+          >
+            Rotate
+          </button>
+        </div>
+
+        <!-- Rotate Marker (shown if rotated an odd number of times) -->
+        <div class="absolute bottom-1 right-1 text-lg z-10">
+          <span v-if="rotateCounts[index] % 2 === 1">🔁</span>
+        </div>
+
+        <!-- Card -->
+        <div class="w-full h-full" @click="revealCard(index)">
+          <img
+            v-if="revealedIndexes.includes(index)"
+            :src="card.image"
+            :alt="card.name"
+            class="w-full h-full object-contain rounded-xl shadow-md hover:ring-4 hover:ring-yellow-300 transition-transform duration-300 card-front"
+            :class="[
+              `card-front-${index}`,
+              {
+                'rotate-180': finalOrientation(card, index) === 'reversed'
+              }
+            ]"
+            @click.stop="openModal(card)"
+          />
+          <CardBack v-else />
+        </div>
       </div>
     </div>
 
+    <!-- Modal with resolved orientation -->
     <CardModal
       v-if="selectedCard"
-      :card="selectedCard"
+      :card="{
+        ...selectedCard,
+        orientation:
+          finalOrientation(
+            selectedCard,
+            drawnCards.findIndex(c => c.id === selectedCard?.id)
+          )
+      }"
       @close="selectedCard = null"
     />
   </div>
