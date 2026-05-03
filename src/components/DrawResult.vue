@@ -40,7 +40,13 @@ function rotateOrientation(index: number) {
 
 function finalOrientation(card: DrawnCard, index: number): 'upright' | 'reversed' {
   const isRotated = rotateCounts.value[index] % 2 === 1
-  return (card.orientation === 'reversed') !== isRotated ? 'upright' : 'reversed'
+  if (isRotated) {
+    if (card.orientation === 'reversed') {
+      return 'upright'
+    }
+    return 'reversed'
+  }
+  return card.orientation
 }
 </script>
 
@@ -53,10 +59,7 @@ function finalOrientation(card: DrawnCard, index: number): 'upright' | 'reversed
         class="card relative w-32 h-48 cursor-pointer flex items-center justify-center"
       >
         <!-- Rotate Orientation Button -->
-        <div
-          v-if="!revealedIndexes.includes(index)"
-          class="absolute top-1 left-1 z-10"
-        >
+        <div v-if="!revealedIndexes.includes(index)" class="absolute top-1 left-1 z-10">
           <button
             @click.stop="rotateOrientation(index)"
             class="text-sm bg-yellow-400 text-black px-2 py-1 rounded hover:bg-yellow-300"
@@ -80,15 +83,12 @@ function finalOrientation(card: DrawnCard, index: number): 'upright' | 'reversed
             :class="[
               `card-front-${index}`,
               {
-                'rotate-180': finalOrientation(card, index) === 'reversed'
-              }
+                'rotate-180': finalOrientation(card, index) === 'reversed',
+              },
             ]"
             @click.stop="openModal(card)"
           />
-          <CardBack
-            v-else
-            :class="`card-back-${index}`"
-          />
+          <CardBack v-else :class="`card-back-${index}`" />
         </div>
       </div>
     </div>
@@ -97,11 +97,10 @@ function finalOrientation(card: DrawnCard, index: number): 'upright' | 'reversed
       v-if="selectedCard"
       :card="{
         ...selectedCard,
-        orientation:
-          finalOrientation(
-            selectedCard,
-            cards.findIndex(c => c.id === selectedCard?.id)
-          )
+        orientation: finalOrientation(
+          selectedCard,
+          cards.findIndex((c) => c.id === selectedCard?.id)
+        ),
       }"
       @close="selectedCard = null"
     />
