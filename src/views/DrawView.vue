@@ -13,6 +13,22 @@ const isShuffling = ref(false)
 const shuffleDirection = ref<'clockwise' | 'anticlockwise' | null>(null)
 const hasCollectedToDeck = ref(false)
 
+const cutStart = ref(1)
+const cutEnd = ref(1)
+const cutCount = ref(0)
+const cutPosition = ref<'top' | 'bottom'>('top')
+
+// Toast logic
+const showCutToast = ref(false)
+const cutToastMessage = ref('')
+function showCutInfoToast(start: number, end: number, position: string) {
+  cutToastMessage.value = `Cut cards ${start}–${end} to the ${position}`
+  showCutToast.value = true
+  setTimeout(() => {
+    showCutToast.value = false
+  }, 3000)
+}
+
 const scatteredCards = ref(
   fullDeck.value.map((card) => {
     const angle = Math.random() * 360 * (Math.PI / 180)
@@ -43,7 +59,6 @@ const { start: startTicker, stop: stopTicker } = useGsapTicker(updatePositions)
 
 function startShuffle(direction: 'clockwise' | 'anticlockwise') {
   if (isShuffling.value || isStopping.value || hasCollectedToDeck.value) return
-
   stopShuffle(true)
   shuffleDirection.value = direction
   isShuffling.value = true
@@ -52,7 +67,6 @@ function startShuffle(direction: 'clockwise' | 'anticlockwise') {
 
 function stopShuffle(immediate = false) {
   if (!isShuffling.value) return
-
   isShuffling.value = false
   shuffleDirection.value = null
   stopTicker()
@@ -66,10 +80,7 @@ function stopShuffle(immediate = false) {
 
 onUnmounted(() => stopShuffle(true))
 
-const deckTarget = {
-  x: 0,
-  y: 0,
-}
+const deckTarget = { x: 0, y: 0 }
 
 function collectCardsToDeck() {
   if (isShuffling.value) return
@@ -92,13 +103,34 @@ function collectCardsToDeck() {
 
   hasCollectedToDeck.value = true
 }
+
+function cutDeck() {
+  const rawStart = Math.max(1, Math.min(78, cutStart.value))
+  const rawEnd = Math.max(1, Math.min(78, cutEnd.value))
+  const from = Math.min(rawStart, rawEnd)
+  const to = Math.max(rawStart, rawEnd)
+
+  const sorted = scatteredCards.value.toSorted((a, b) => {
+    if (b.y !== a.y) return a.y - b.y
+    return a.x - b.x
+  })
+
+  const portion = sorted.slice(from - 1, to)
+  const rest = sorted.slice(0, from - 1).concat(sorted.slice(to))
+
+  scatteredCards.value =
+    cutPosition.value === 'top' ? [...portion, ...rest] : [...rest, ...portion]
+
+  cutCount.value += 1
+  showCutInfoToast(from, to, cutPosition.value)
+}
 </script>
 
 <template>
   <div class="relative w-full h-full overflow-hidden bg-gradient-to-b from-purple-950 to-indigo-950">
     <!-- Controls -->
-    <div class="absolute top-4 left-1/2 transform -translate-x-1/2 z-10 flex gap-4 flex-wrap justify-center">
-      <!-- Shuffle Buttons (only visible before deck collected) -->
+    <div class="absolute top-4 left-1/2 transform -translate-x-1/2 z-10 flex flex-wrap gap-4 justify-center">
+      <!-- Shuffle Buttons -->
       <button
         v-if="!isShuffling && !hasCollectedToDeck"
         :disabled="isStopping"
@@ -116,7 +148,7 @@ function collectCardsToDeck() {
         Shuffle Clockwise
       </button>
 
-      <!-- Stop Shuffle -->
+      <!-- Stop -->
       <button
         v-if="isShuffling"
         @click="() => stopShuffle()"
@@ -134,22 +166,43 @@ function collectCardsToDeck() {
         Back to Deck
       </button>
 
-      <!-- Proceed / Skip Cut -->
-      <button
-        v-if="hasCollectedToDeck"
-        class="px-4 py-2 bg-yellow-500 text-white rounded-xl hover:bg-yellow-600 transition"
-      >
-        Proceed to Cut
-      </button>
-      <button
-        v-if="hasCollectedToDeck"
-        class="px-4 py-2 bg-gray-500 text-white rounded-xl hover:bg-gray-600 transition"
-      >
-        Skip Cut
-      </button>
+      <!-- Cut Options -->
+      <template v-if="hasCollectedToDeck">
+        <input
+          type="number"
+          v-model.number="cutStart"
+          min="1"
+          max="78"
+          class="w-20 px-2 py-1 rounded border"
+          placeholder="Start"
+        />
+        <input
+          type="number"
+          v-model.number="cutEnd"
+          min="1"
+          max="78"
+          class="w-20 px-2 py-1 rounded border"
+          placeholder="End"
+        />
+        <select v-model="cutPosition" class="px-2 py-1 rounded border">
+          <option value="top">To Top</option>
+          <option value="bottom">To Bottom</option>
+        </select>
+        <button
+          @click="cutDeck"
+          class="px-4 py-2 bg-yellow-500 text-white rounded-xl hover:bg-yellow-600 transition"
+        >
+          Cut ({{ cutCount }})
+        </button>
+        <button
+          class="px-4 py-2 bg-gray-500 text-white rounded-xl hover:bg-gray-600 transition"
+        >
+          Done Cut
+        </button>
+      </template>
     </div>
 
-    <!-- Card Orbit -->
+    <!-- Cards -->
     <div class="absolute left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2">
       <div
         v-for="card in scatteredCards"
@@ -165,5 +218,26 @@ function collectCardsToDeck() {
         <CardBack />
       </div>
     </div>
+
+    <!-- Toast Notification -->
+    <transition name="fade">
+      <div
+        v-if="showCutToast"
+        class="absolute bottom-4 left-1/2 transform -translate-x-1/2 bg-black bg-opacity-70 text-white px-6 py-2 rounded-xl shadow-lg"
+      >
+        {{ cutToastMessage }}
+      </div>
+    </transition>
   </div>
 </template>
+
+<style scoped>
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.3s ease;
+}
+.fade-enter-from,
+.fade-leave-to {
+  opacity: 0;
+}
+</style>
