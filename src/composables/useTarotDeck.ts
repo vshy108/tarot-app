@@ -1,11 +1,13 @@
-export function useTarotDeck() {
-    const cards = import.meta.glob('@/assets/cards/*.png', {
-        eager: true,
-        import: 'default',
-    })
+import { tarotDeck } from '@/data/tarotDeck'
+import type { TarotCard } from '@/data/tarotDeck'
 
-    // Convert to usable array of image URLs
-    const cardImages = Object.values(cards)
+export interface TarotCardWithId extends TarotCard {
+    id: string
+}
 
-    return cardImages
+export function useTarotDeck(): TarotCardWithId[] {
+    return Object.entries(tarotDeck).map(([id, card]) => ({
+        id,
+        ...card,
+    }))
 }
