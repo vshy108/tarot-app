@@ -5,7 +5,7 @@ import { ref, onMounted, nextTick } from 'vue'
 import { type TarotCardWithId, useTarotDeck } from '@/composables/useTarotDeck'
 import { gsap } from 'gsap'
 import TarotCardModal from '@/components/TarotCardModal.vue'
-import CardBack from './CardBack.vue'
+import CardBack from '../components/CardBack.vue'
 
 const deck = useTarotDeck()
 const fullDeck = ref<TarotCardWithId[]>(deck)
