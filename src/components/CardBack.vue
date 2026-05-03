@@ -1,7 +1,7 @@
+<script setup lang="ts">
+import cardBack from '@/assets/CardBacks.png'
+</script>
+
 <template>
-  <div
-    class="w-full h-full rounded-lg bg-gradient-to-br from-indigo-700 to-purple-900 border-2 border-white shadow-lg flex items-center justify-center text-white text-2xl font-bold"
-  >
-    🔮
-  </div>
+  <img :src="cardBack" alt="Tarot Card Back" class="w-full h-auto object-contain" />
 </template>
