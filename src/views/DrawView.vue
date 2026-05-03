@@ -206,10 +206,30 @@ function cutDeck() {
         <button
           :disabled="isCutting"
           @click="cutDeck"
-          class="px-4 py-2 bg-yellow-500 text-white rounded-xl hover:bg-yellow-600 transition disabled:opacity-50"
+          class="px-4 py-2 bg-yellow-500 text-white rounded-xl hover:bg-yellow-600 transition disabled:opacity-50 flex items-center gap-2"
         >
-          <span v-if="isCutting">Cutting...</span>
-          <span v-else>Cut ({{ cutCount }})</span>
+          <svg
+            v-if="isCutting"
+            class="animate-spin h-4 w-4 text-white"
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 24 24"
+          >
+            <circle
+              class="opacity-25"
+              cx="12"
+              cy="12"
+              r="10"
+              stroke="currentColor"
+              stroke-width="4"
+            ></circle>
+            <path
+              class="opacity-75"
+              fill="currentColor"
+              d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"
+            ></path>
+          </svg>
+          <span>{{ isCutting ? 'Cutting...' : `Cut (${cutCount})` }}</span>
         </button>
         <button
           class="px-4 py-2 bg-gray-500 text-white rounded-xl hover:bg-gray-600 transition"
