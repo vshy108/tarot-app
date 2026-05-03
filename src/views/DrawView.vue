@@ -505,7 +505,7 @@ function chooseCard(card: CollectedCard) {
         class="relative cursor-pointer hover:scale-105 transition-transform"
       >
         <div
-          class="w-full aspect-[5/8]"
+          class="max-w-32 max-h-48 flex m-auto"
           :class="{
             'ring-4 ring-yellow-400': chosenCards.includes(card),
           }"
