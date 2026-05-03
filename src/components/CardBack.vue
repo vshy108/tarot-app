@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import cardBack from '@/assets/CardBacks.png'
+import cardBack from "@/assets/CardBacks.png";
 </script>
 
 <template>

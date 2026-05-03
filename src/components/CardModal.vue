@@ -3,9 +3,7 @@
     class="fixed inset-0 bg-black/60 flex items-center justify-center z-50"
     @click.self="close"
   >
-    <div
-      class="bg-white text-black w-full max-w-md rounded-xl shadow-lg p-6 relative"
-    >
+    <div class="bg-white text-black w-full max-w-md rounded-xl shadow-lg p-6 relative">
       <button
         @click="close"
         class="absolute top-3 right-3 text-gray-600 hover:text-black text-xl"
@@ -31,11 +29,11 @@
 </template>
 
 <script setup lang="ts">
-import { type TarotCardWithId } from '@/composables/useTarotDeck'
+import { type CardWithId } from '@/composables/useDeck'
 
 // [@vue/compiler-sfc] defineProps is a compiler macro and no longer needs to be imported
 const props = defineProps<{
-  card: TarotCardWithId
+  card: CardWithId
 }>()
 
 // [@vue/compiler-sfc] defineEmits is a compiler macro and no longer needs to be imported
@@ -47,4 +45,3 @@ function close() {
   emit('close')
 }
 </script>
-

@@ -1,15 +1,15 @@
-import { tarotDeck } from '@/data/tarotDeck'
-import type { TarotCard } from '@/data/tarotDeck'
+import { deck } from '@/data/deck'
+import type { Card } from '@/data/deck'
 
-export interface TarotCardWithId extends TarotCard {
+export interface CardWithId extends Card {
     id: string,
     type: 'Major' | 'Minor'
     suit?: 'Cups' | 'Swords' | 'Wands' | 'Pentacles'
     rank?: 'Ace' | '2' | '3' | '4' | '5' | '6' | '7' | '8' | '9' | '10' | 'Page' | 'Knight' | 'Queen' | 'King'
 }
 
-export function useTarotDeck(): TarotCardWithId[] {
-    return Object.entries(tarotDeck).map(([id, card]) => {
+export function useDeck(): CardWithId[] {
+    return Object.entries(deck).map(([id, card]) => {
         const isMajor = id.startsWith('MAJ');
 
         if (isMajor) {
@@ -23,14 +23,14 @@ export function useTarotDeck(): TarotCardWithId[] {
         const suitCode = id.split('-')[0];
         const rankCode = id.split('-')[1];
 
-        const suitMap: Record<string, TarotCardWithId['suit']> = {
+        const suitMap: Record<string, CardWithId['suit']> = {
             W: 'Wands',
             C: 'Cups',
             S: 'Swords',
             P: 'Pentacles',
         };
 
-        const rankMap: Record<string, TarotCardWithId['rank']> = {
+        const rankMap: Record<string, CardWithId['rank']> = {
             '01': 'Ace',
             '02': '2',
             '03': '3',

@@ -1,12 +1,12 @@
 <script setup lang="ts">
-import { useTarotDeck, type TarotCardWithId  } from "@/composables/useTarotDeck";
-import { TarotCard } from "@/data/tarotDeck";
+import { useDeck, type CardWithId  } from "@/composables/useDeck";
+import { Card } from "@/data/deck";
 import { ref, computed, onMounted } from "vue";
-import TarotCardModal from "@/components/TarotCardModal.vue";
+import CardModal from "@/components/CardModal.vue";
 
-const deck = useTarotDeck();
+const deck = useDeck();
 
-const hoveredCard = ref<null | TarotCardWithId>(null)
+const hoveredCard = ref<null | CardWithId>(null)
 const isModalOpen = ref(false);
 
 const majorArcana = computed(() => deck.filter((card) => card.type === "Major"));
@@ -21,7 +21,7 @@ const minorArcanaBySuit = computed(() => {
   );
 });
 
-function openCardModal(card: TarotCardWithId) {
+function openCardModal(card: CardWithId) {
   hoveredCard.value = card;
   isModalOpen.value = true;
 }
@@ -81,7 +81,7 @@ function closeModal() {
     </div>
 
     <!-- Modal for Card Details -->
-    <TarotCardModal
+    <CardModal
       v-if="isModalOpen && hoveredCard"
       :card="hoveredCard"
       @close="closeModal"
