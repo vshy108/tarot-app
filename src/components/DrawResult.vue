@@ -1,9 +1,10 @@
 <script setup lang="ts">
-import { ref, nextTick, computed, watch } from 'vue'
+import { ref, watch } from 'vue'
 import { type DrawnCard } from '@/composables/useDeck'
 import CardModal from '@/components/CardModal.vue'
 import CardBack from '@/components/CardBack.vue'
 import ChosenOverlay from "@/components/ChosenOverlay.vue";
+import { gsap } from 'gsap';
 
 const props = defineProps<{
   cards: DrawnCard[]
@@ -62,7 +63,7 @@ function finalOrientation(card: DrawnCard, index: number): 'upright' | 'reversed
 </script>
 
 <template>
-  <div class="min-h-full text-white p-4">
+  <div class="min-h-full text-white">
     <div class="mt-10 flex justify-center gap-6 card-deck">
       <div
         v-for="(card, index) in cards"

@@ -45,8 +45,8 @@ const isCutting = ref(false);
 let cutCooldownTimer: ReturnType<typeof setTimeout> | null = null;
 let cutAnimationTimeout: ReturnType<typeof setTimeout> | null = null;
 let cutToastTimeout: ReturnType<typeof setTimeout> | null = null;
-const cardWidth = 40;
-const cardHeight = 64;
+const cardWidth = 32;
+const cardHeight = 48;
 const deckTarget = { x: -cardWidth, y: -cardHeight };
 
 const sortedCards = ref<CollectedCard[]>([]); // shared reactive array
@@ -172,7 +172,7 @@ function collectCardsToDeck() {
     // NOTE: gsap mutate the card value
     gsap.to(card, {
       x: deckTarget.x,
-      y: isReversed ? deckTarget.y + cardHeight : deckTarget.y,
+      y: isReversed ? 0 : deckTarget.y - 16,
       rotate: isReversed ? 180 : 0,
       orientation: isReversed ? "reversed" : "upright",
       duration: 0.5,
@@ -224,7 +224,7 @@ function cutDeck() {
           card,
           {
             x: deckTarget.x,
-            y: isReversed ? deckTarget.y + cardHeight : deckTarget.y,
+            y: isReversed ? 0 : deckTarget.y - 16,
             rotate: isReversed ? 180 : 0,
             orientation: isReversed ? "reversed" : "upright",
             duration: 0.5,
@@ -469,7 +469,7 @@ function chooseCard(card: CollectedCard) {
     <!-- Spread info + question -->
     <div
       v-if="isWaitingForCardSelection || isConfirmed"
-      class="text-white text-center mb-4 space-y-2"
+      class="text-white text-center mt-4 space-y-2"
     >
       <div class="text-xl font-semibold">
         {{ spreadMode === "1" ? "1 Card Spread" : "3 Cards Spread" }}
@@ -492,7 +492,7 @@ function chooseCard(card: CollectedCard) {
 
     <div
       v-if="spreadMode && questionConfirmed && hasCutFinished && !isConfirmed"
-      class="absolute inset-0 pt-16 pb-4 px-2 z-0 overflow-y-auto grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 xl:grid-cols-13 gap-2"
+      class="absolute inset-0 pt-20 pb-4 px-2 z-0 overflow-y-auto grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 xl:grid-cols-13 gap-2"
     >
       <div
         v-for="card in sortedCards"
