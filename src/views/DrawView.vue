@@ -128,7 +128,7 @@ onUnmounted(() => {
   if (cutCooldownTimer) clearTimeout(cutCooldownTimer);
 });
 
-const deckTarget = { x: -window.innerWidth / 2, y: -window.innerHeight / 2 };
+const deckTarget = { x: -40, y: -64 };
 
 function collectCardsToDeck() {
   if (isShuffling.value) return;
@@ -250,26 +250,45 @@ function toggleOrientation(card: any) {
         Reassemble
       </button>
       <template v-if="hasCollectedToDeck">
-        <input
-          type="number"
-          v-model.number="cutStart"
-          min="1"
-          max="78"
-          class="w-20 px-2 py-1 rounded border"
-          placeholder="Start"
-        />
-        <input
-          type="number"
-          v-model.number="cutEnd"
-          min="1"
-          max="78"
-          class="w-20 px-2 py-1 rounded border"
-          placeholder="End"
-        />
-        <select v-model="cutPosition" class="px-2 py-1 rounded border">
-          <option value="top">To Top</option>
-          <option value="bottom">To Bottom</option>
-        </select>
+        <div
+          class="flex flex-wrap items-center gap-4 bg-white/10 p-4 rounded-xl shadow border border-white/20"
+        >
+          <div class="flex flex-col">
+            <label class="text-sm mb-1 text-white/70">Start</label>
+            <input
+              type="number"
+              v-model.number="cutStart"
+              min="1"
+              max="78"
+              class="w-24 px-3 py-2 rounded-lg border border-white/30 bg-white/5 text-white placeholder-white/50 focus:outline-none focus:ring-2 focus:ring-pink-400 transition"
+              placeholder="Start"
+            />
+          </div>
+
+          <div class="flex flex-col">
+            <label class="text-sm mb-1 text-white/70">End</label>
+            <input
+              type="number"
+              v-model.number="cutEnd"
+              min="1"
+              max="78"
+              class="w-24 px-3 py-2 rounded-lg border border-white/30 bg-white/5 text-white placeholder-white/50 focus:outline-none focus:ring-2 focus:ring-pink-400 transition"
+              placeholder="End"
+            />
+          </div>
+
+          <div class="flex flex-col">
+            <label class="text-sm mb-1 text-white/70">Cut Position</label>
+            <select
+              v-model="cutPosition"
+              class="w-32 px-3 py-2 rounded-lg border border-white/30 bg-white/5 text-white focus:outline-none focus:ring-2 focus:ring-pink-400 transition"
+            >
+              <option value="top">To Top</option>
+              <option value="bottom">To Bottom</option>
+            </select>
+          </div>
+        </div>
+
         <button
           :disabled="isCutting"
           @click="cutDeck"
