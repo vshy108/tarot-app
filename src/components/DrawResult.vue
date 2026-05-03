@@ -1,14 +1,17 @@
 <script setup lang="ts">
-import { ref, watch } from 'vue'
+import { ref, watch, nextTick } from 'vue'
 import { type DrawnCard } from '@/composables/useDeck'
 import CardModal from '@/components/CardModal.vue'
 import CardBack from '@/components/CardBack.vue'
-import ChosenOverlay from "@/components/ChosenOverlay.vue";
-import { gsap } from 'gsap';
+import ChosenOverlay from '@/components/ChosenOverlay.vue'
+import { gsap } from 'gsap'
 
 const props = defineProps<{
   cards: DrawnCard[]
 }>()
+
+// cards that are rendered on screen
+const cardsToRender = ref<DrawnCard[]>([])
 
 const revealedIndexes = ref<number[]>([])
 const selectedCard = ref<DrawnCard | null>(null)
@@ -16,10 +19,43 @@ const rotateCounts = ref<number[]>([])
 
 watch(
   () => props.cards,
-  (newCards) => {
+  async (newCards, oldCards) => {
+    console.log('newCards', newCards)
+    if (oldCards?.length) {
+      await gsap.to('.card', {
+        x: 100,
+        opacity: 0,
+        duration: 0.4,
+        stagger: 0.05,
+        ease: 'power2.in'
+      })
+    }
+
+    // Clear cards from screen first (prevent flicker)
+    cardsToRender.value = []
     revealedIndexes.value = []
     rotateCounts.value = Array(newCards.length).fill(0)
     selectedCard.value = null
+
+    await nextTick()
+
+    // Set new cards
+    cardsToRender.value = newCards
+
+    await nextTick()
+
+    // Animate new cards in
+    gsap.fromTo(
+      '.card',
+      { x: -100, opacity: 0 },
+      {
+        x: 0,
+        opacity: 1,
+        duration: 0.4,
+        stagger: 0.05,
+        ease: 'power2.out'
+      }
+    )
   },
   { immediate: true }
 )
@@ -44,7 +80,7 @@ function rotateOrientation(index: number) {
       ease: 'power2.inOut'
     })
   }
-  const card = props.cards[index]
+  const card = cardsToRender.value[index]
   if (card) {
     card.orientation = card.orientation === 'upright' ? 'reversed' : 'upright'
   }
@@ -52,13 +88,9 @@ function rotateOrientation(index: number) {
 
 function finalOrientation(card: DrawnCard, index: number): 'upright' | 'reversed' {
   const isRotated = rotateCounts.value[index] % 2 === 1
-  if (isRotated) {
-    if (card.orientation === 'reversed') {
-      return 'upright'
-    }
-    return 'reversed'
-  }
-  return card.orientation
+  return isRotated
+    ? card.orientation === 'reversed' ? 'upright' : 'reversed'
+    : card.orientation
 }
 </script>
 
@@ -66,7 +98,7 @@ function finalOrientation(card: DrawnCard, index: number): 'upright' | 'reversed
   <div class="text-white p-4">
     <div class="mt-10 flex flex-wrap justify-center gap-6 card-deck">
       <div
-        v-for="(card, index) in cards"
+        v-for="(card, index) in cardsToRender"
         :key="card.id"
         class="card relative w-32 h-48 cursor-pointer flex items-center justify-center"
       >
@@ -88,6 +120,7 @@ function finalOrientation(card: DrawnCard, index: number): 'upright' | 'reversed
 
         <!-- Card -->
         <div class="w-full h-full" @click="revealCard(index)">
+          <!-- Front -->
           <img
             v-if="revealedIndexes.includes(index)"
             :src="card.image"
@@ -101,10 +134,14 @@ function finalOrientation(card: DrawnCard, index: number): 'upright' | 'reversed
             ]"
             @click.stop="openModal(card)"
           />
-          <CardBack v-else :class="`card-back-${index}`" />
+          <!-- Back -->
+          <CardBack
+            v-else
+            :class="`card-back-${index} w-full h-full object-contain rounded-xl shadow-md`"
+          />
           <ChosenOverlay
             :card="card"
-            :list="cards"
+            :list="cardsToRender"
             :index="index"
             :hiddenIndexes="revealedIndexes"
           />
@@ -118,7 +155,7 @@ function finalOrientation(card: DrawnCard, index: number): 'upright' | 'reversed
         ...selectedCard,
         orientation: finalOrientation(
           selectedCard,
-          cards.findIndex((c) => c.id === selectedCard?.id)
+          cardsToRender.findIndex((c) => c.id === selectedCard?.id)
         ),
       }"
       @close="selectedCard = null"
