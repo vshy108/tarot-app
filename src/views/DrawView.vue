@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import { ref, onUnmounted } from 'vue'
-import { gsap } from 'gsap'
 import { useDeck } from '@/composables/useDeck'
 import { useSmoothStop } from '@/composables/useSmoothStop'
+import { useGsapTicker } from '@/composables/useGsapTicker'
 import CardBack from '@/components/CardBack.vue'
 
 const fullDeck = ref(useDeck())
@@ -10,11 +10,10 @@ const fullDeck = ref(useDeck())
 const { isStopping, isAnimating, triggerSmoothStop } = useSmoothStop(10)
 const isShuffling = ref(false)
 const shuffleDirection = ref<'clockwise' | 'anticlockwise' | null>(null)
-let tickerCallback: (() => void) | null = null
 
 const scatteredCards = ref(
   fullDeck.value.map((card) => {
-    const angle = (Math.random() * 360) * (Math.PI / 180)
+    const angle = Math.random() * 360 * (Math.PI / 180)
     const radius = 100 + Math.random() * 150
     const speed = 0.005 + Math.random() * 0.01
     return {
@@ -29,39 +28,38 @@ const scatteredCards = ref(
   })
 )
 
+// Define ticker logic once
+const updatePositions = () => {
+  scatteredCards.value.forEach((card) => {
+    const dir = shuffleDirection.value === 'clockwise' ? 1 : -1
+    card.angle += card.speed * dir
+    card.x = Math.cos(card.angle) * card.radius
+    card.y = Math.sin(card.angle) * card.radius
+  })
+}
+
+// Reuse gsap ticker composable
+const { start: startTicker, stop: stopTicker } = useGsapTicker(updatePositions)
+
 function startShuffle(direction: 'clockwise' | 'anticlockwise') {
   if (isShuffling.value || isStopping.value) return
 
   stopShuffle(true)
   shuffleDirection.value = direction
   isShuffling.value = true
-
-  tickerCallback = () => {
-    scatteredCards.value.forEach((card) => {
-      card.angle += (direction === 'clockwise' ? card.speed : -card.speed)
-      card.x = Math.cos(card.angle) * card.radius
-      card.y = Math.sin(card.angle) * card.radius
-    })
-  }
-
-  gsap.ticker.add(tickerCallback)
+  startTicker()
 }
 
 function stopShuffle(immediate = false) {
-  if (!isShuffling.value && !tickerCallback) return
+  if (!isShuffling.value) return
 
   isShuffling.value = false
   shuffleDirection.value = null
-
-  if (tickerCallback) {
-    gsap.ticker.remove(tickerCallback)
-    tickerCallback = null
-  }
+  stopTicker()
 
   if (!immediate) {
     triggerSmoothStop()
   } else {
-    // immediate cleanup
     isAnimating.value = false
   }
 }
@@ -69,11 +67,8 @@ function stopShuffle(immediate = false) {
 onUnmounted(() => stopShuffle(true))
 </script>
 
-
 <template>
-  <div
-    class="relative w-full h-full overflow-hidden bg-gradient-to-b from-purple-950 to-indigo-950"
-  >
+  <div class="relative w-full h-full overflow-hidden bg-gradient-to-b from-purple-950 to-indigo-950">
     <!-- Controls -->
     <div class="absolute top-4 left-1/2 transform -translate-x-1/2 z-10 flex gap-4">
       <button
@@ -108,10 +103,10 @@ onUnmounted(() => stopShuffle(true))
         :key="card.id"
         :class="[
           'absolute w-20 h-32',
-          isAnimating ? 'transition-transform duration-10' : '', // duration-300 caused the card change location after stop
+          isAnimating ? 'transition-transform duration-10' : ''
         ]"
         :style="{
-          transform: `translate(${card.x}px, ${card.y}px) rotate(${card.rotate}deg)`,
+          transform: `translate(${card.x}px, ${card.y}px) rotate(${card.rotate}deg)`
         }"
       >
         <CardBack />
