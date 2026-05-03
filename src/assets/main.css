@@ -1,1 +1,10 @@
 @import "tailwindcss";
+
+/* Global fix for scroll bounce white flash */
+html,
+body {
+  background-color: #2e1065; /* Tailwind's purple-950 */
+  color: white;
+  overscroll-behavior: none;
+  overflow-x: hidden;
+}
