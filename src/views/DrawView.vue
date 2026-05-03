@@ -31,13 +31,18 @@ const cutToastMessage = ref("");
 function showCutInfoToast(start: number, end: number, position: string) {
   cutToastMessage.value = `Cut cards ${start}–${end} to the ${position}`;
   showCutToast.value = true;
-  setTimeout(() => {
+  if (cutToastTimeout) {
+    clearTimeout(cutToastTimeout);
+  }
+  cutToastTimeout = setTimeout(() => {
     showCutToast.value = false;
   }, 3000);
 }
 
 const isCutting = ref(false);
 let cutCooldownTimer: ReturnType<typeof setTimeout> | null = null;
+let cutAnimationTimeout: ReturnType<typeof setTimeout> | null = null;
+let cutToastTimeout: ReturnType<typeof setTimeout> | null = null;
 const deckTarget = { x: -40, y: -64 };
 
 const isWaitingForCardSelection = computed(() => {
@@ -127,6 +132,8 @@ onMounted(() => {
 onUnmounted(() => {
   stopShuffle(true);
   if (cutCooldownTimer) clearTimeout(cutCooldownTimer);
+  if (cutAnimationTimeout) clearTimeout(cutAnimationTimeout);
+  if (cutToastTimeout) clearTimeout(cutToastTimeout);
 });
 
 function collectCardsToDeck() {
@@ -190,7 +197,11 @@ function cutDeck() {
     });
   });
 
-  setTimeout(() => {
+  if (cutAnimationTimeout) {
+    clearTimeout(cutAnimationTimeout);
+  }
+
+  cutAnimationTimeout = setTimeout(() => {
     const reassembled =
       cutPosition.value === "top" ? [...portion, ...rest] : [...rest, ...portion];
 
