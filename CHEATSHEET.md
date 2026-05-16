@@ -28,10 +28,13 @@ Quick reference for the Vue 3 + Vite tarot app.
 | App shell | `src/App.vue` |
 | Routes | `src/router.ts` |
 | Deck data | `src/data/deck.ts` |
+| Typed inventory | `src/data/inventory.ts` |
+| Reading prompts | `src/data/readingNotes.ts` |
 | Deck state | `src/composables/useDeck.ts` |
 | Main board | `src/components/Board.vue` |
 | Draw result | `src/components/DrawResult.vue` |
-| Simple draw view | `src/views/SimpleDrawView.vue` |
+| Single draw view | `src/views/SingleDrawView.vue` |
+| Three-card spread view | `src/views/SpreadView.vue` |
 
 ## 4. Vue Patterns
 
@@ -47,8 +50,8 @@ Use `<script setup lang="ts">` for compact typed components. Keep deck logic in 
 
 ## 5. Tarot Data Rules
 
-- Keep each card represented once in `src/data/deck.ts`.
-- Store title, suit/category, and image path in data rather than component branches.
+- Keep each card represented once in `src/data/deck.ts` and validated once in `src/data/inventory.ts`.
+- Store title, suit/category, rank, prompt, and image path in data rather than component branches.
 - Keep draw logic duplicate-safe when adding multi-card spreads.
 - Credit external card assets in `README.md`.
 
@@ -66,5 +69,7 @@ Before committing UI changes, run:
 ```bash
 pnpm build
 ```
+
+The production build imports the typed inventory and fails if the app cannot load exactly 78 unique card ids and image paths.
 
 For behavior changes, add or update component/composable tests when a test runner is introduced.

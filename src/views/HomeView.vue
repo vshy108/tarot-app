@@ -1,55 +1,56 @@
 <template>
-  <div class="flex flex-col items-center justify-center text-center py-20 px-6">
-    <h1 class="text-4xl md:text-5xl font-bold text-pink-300 mb-6">
-      Welcome to the Tarot Journey
-    </h1>
-
-    <p class="max-w-2xl text-lg text-white/80 mb-10 leading-relaxed">
-      Explore the mysteries of the Tarot. Whether you're seeking clarity, guidance, or
-      inspiration, let the cards reveal what the universe has in store for you.
-    </p>
-
-    <div class="flex flex-col sm:flex-row gap-4">
-      <RouterLink
-        to="/draw"
-        class="inline-block bg-pink-600 hover:bg-pink-500 text-white text-lg font-semibold px-6 py-3 rounded-xl shadow-lg transition-all"
-      >
-        🌟 Begin Advanced Draw Journey
-      </RouterLink>
-
-      <RouterLink
-        to="/simple-draw"
-        class="inline-block bg-purple-600 hover:bg-purple-500 text-white text-lg font-semibold px-6 py-3 rounded-xl shadow-lg transition-all"
-      >
-        🃏 Simple 3 Card Draw
-      </RouterLink>
-    </div>
-
-    <div class="mt-16 grid grid-cols-1 md:grid-cols-2 gap-6 max-w-4xl w-full">
-      <div class="bg-white/10 border border-white/20 p-6 rounded-lg shadow-sm">
-        <h2 class="text-xl font-semibold text-pink-200 mb-2">✨ About the Tarot</h2>
-        <p class="text-white/70 text-sm">
-          The Tarot is a deck of 78 cards, each rich with symbolism and meaning. It's used
-          for divination, reflection, and personal insight.
+  <main class="mx-auto flex max-w-7xl flex-col gap-10 px-4 py-10 text-slate-100">
+    <section class="grid gap-8 md:grid-cols-[1fr_18rem] md:items-center">
+      <div class="space-y-6">
+        <p class="text-sm uppercase tracking-[0.2em] text-pink-200">Rider-Waite-Smith deck</p>
+        <h1 class="max-w-3xl text-4xl font-bold md:text-6xl">Tarot Table</h1>
+        <p class="max-w-2xl text-lg leading-8 text-slate-200">
+          Draw a single card, lay out a three-card spread, or browse the full 78-card inventory with local prompts and upright or reversed orientation.
         </p>
-      </div>
-      <RouterLink to="/cards" class="block">
-        <div
-          class="bg-white/10 border border-white/20 p-6 rounded-lg shadow-sm hover:bg-white/20 hover:border-white/30 transition-colors duration-200"
-        >
-          <h2 class="text-xl font-semibold text-pink-200 mb-2">
-            🃏 Major & Minor Arcana
-          </h2>
-          <p class="text-white/70 text-sm">
-            The 22 Major Arcana reveal spiritual lessons and life themes. The 56 Minor
-            Arcana explore day-to-day experiences.
-          </p>
+        <div class="flex flex-wrap gap-3">
+          <RouterLink
+            to="/single"
+            class="rounded-md bg-pink-500 px-5 py-3 font-semibold text-white hover:bg-pink-400 focus:outline-none focus:ring-2 focus:ring-pink-200"
+          >
+            Single card
+          </RouterLink>
+          <RouterLink
+            to="/spread"
+            class="rounded-md bg-amber-500 px-5 py-3 font-semibold text-slate-950 hover:bg-amber-400 focus:outline-none focus:ring-2 focus:ring-amber-100"
+          >
+            Three-card spread
+          </RouterLink>
+          <RouterLink
+            to="/cards"
+            class="rounded-md border border-white/20 px-5 py-3 font-semibold text-white hover:bg-white/10 focus:outline-none focus:ring-2 focus:ring-pink-200"
+          >
+            Browse deck
+          </RouterLink>
         </div>
-      </RouterLink>
-    </div>
-  </div>
-</template>
+      </div>
 
-<script setup lang="ts">
-// Static content, no logic required here
-</script>
+      <div class="rounded-lg border border-pink-300/20 bg-slate-950/70 p-4">
+        <img
+          src="/src/assets/cards/maj-00-the-fool.png"
+          alt="The Fool tarot card"
+          class="mx-auto max-h-96 rounded-md object-contain shadow-2xl"
+        >
+      </div>
+    </section>
+
+    <section class="grid gap-4 md:grid-cols-3">
+      <RouterLink to="/single" class="rounded-lg border border-white/10 bg-white/10 p-5 hover:bg-white/15">
+        <h2 class="text-xl font-semibold text-pink-100">Single Draw</h2>
+        <p class="mt-2 text-sm leading-6 text-slate-200">One card with title, suit or category, rank, orientation, and a concise prompt.</p>
+      </RouterLink>
+      <RouterLink to="/spread" class="rounded-lg border border-white/10 bg-white/10 p-5 hover:bg-white/15">
+        <h2 class="text-xl font-semibold text-pink-100">Past / Present / Future</h2>
+        <p class="mt-2 text-sm leading-6 text-slate-200">Three stable positions, no duplicate cards, and reset or redraw controls.</p>
+      </RouterLink>
+      <RouterLink to="/cards" class="rounded-lg border border-white/10 bg-white/10 p-5 hover:bg-white/15">
+        <h2 class="text-xl font-semibold text-pink-100">78-Card Inventory</h2>
+        <p class="mt-2 text-sm leading-6 text-slate-200">All Rider-Waite-Smith assets are loaded through a typed inventory check.</p>
+      </RouterLink>
+    </section>
+  </main>
+</template>

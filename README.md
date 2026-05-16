@@ -1,25 +1,39 @@
-# Vue 3 + Vite
+# Tarot Table
 
-Follow-up work is tracked in [PLAN.md](PLAN.md).
+Tarot Table is a Vue 3 + Vite tarot reading app built around a local Rider-Waite-Smith image deck. It supports a focused single-card draw, a past/present/future spread, the existing advanced shuffle board, and a full card browser.
 
-This template should help get you started developing with Vue 3 in Vite. The template uses Vue 3 `<script setup>` SFCs, check out the [script setup docs](https://v3.vuejs.org/api/sfc-script-setup.html#sfc-script-setup) to learn more.
+## Features
 
-Learn more about IDE Support for Vue in the [Vue Docs Scaling up Guide](https://vuejs.org/guide/scaling-up/tooling.html#ide-support).
+- Typed 78-card inventory in `src/data/inventory.ts` with id, title, suit/category, rank, Vite image URL, and source image path.
+- Build-time inventory validation that fails when the app does not load exactly 78 unique card ids and image paths.
+- Single-card draw route at `/single` with upright/reversed orientation and local prompts.
+- Three-card spread route at `/spread` with stable past/present/future positions, no duplicate cards, and reset/redraw controls.
+- Local reading prompts in `src/data/readingNotes.ts` for every major arcana card and each minor suit.
+- Full deck browser at `/cards` and advanced shuffle/cut flow at `/draw`.
 
-Tarot images from https://luciellaes.itch.io/rider-waite-smith-tarot-cards-cc0
+## Commands
 
-## Repo Metadata
+```bash
+pnpm install
+pnpm dev
+pnpm build
+pnpm preview
+```
 
-- Repo start date: 2026-05-03
-- Related tech stack versions: typescript ^5.8.3, vue ^3.5.13, vite ^6.3.5, tailwindcss ^4.1.10
+## Deck Data
 
-## Why This Repo Matters
+Card images live in `src/assets/cards/*.png` and are imported through Vite's `import.meta.glob` in `src/data/deck.ts`. The inventory layer derives each card's suit/category, rank, title, and image path from the deck ids, then validates the complete 78-card set during app startup and production build.
 
-This repo matters because it demonstrates a Vue product experience around tarot readings, tying UI state, card data, and user-facing flows together.
+The card art is credited to LuciellaES Rider-Waite-Smith Tarot Cards CC0: https://luciellaes.itch.io/rider-waite-smith-tarot-cards-cc0
+
+## Deployment
+
+Run `pnpm build` and deploy the generated `dist/` directory to any static host such as GitHub Pages, Netlify, Vercel, or an S3 static website bucket. The app uses client-side routes, so configure the host to fall back to `index.html` for `/single`, `/spread`, `/draw`, and `/cards`.
 
 ## Proof Map
 
-| Claim | Where to verify |
-|------|-----------------|
-| Roadmap and acceptance checks | [PLAN.md](PLAN.md) |
-| Implementation code shows the working system | [src/App.vue](src/App.vue) |
+- Plan: `PLAN.md`
+- Commands: `CHEATSHEET.md`
+- Inventory: `src/data/inventory.ts`
+- Prompts: `src/data/readingNotes.ts`
+- Routes: `src/router.ts`

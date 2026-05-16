@@ -19,11 +19,12 @@ const cardRemarks = ref<Record<string, string>>({})
 const showRemarkInputs = ref<Record<string, boolean>>({})
 const spreadSummary = ref('')
 const showSummaryInput = ref(false)
+const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches
 
 watch(
   () => props.cards,
   async (newCards, oldCards) => {
-    if (oldCards?.length) {
+    if (oldCards?.length && !prefersReducedMotion) {
       await gsap.to('.card', {
         x: 100,
         opacity: 0,
@@ -47,17 +48,19 @@ watch(
     cardsToRender.value = newCards
 
     await nextTick()
-    gsap.fromTo(
-      '.card',
-      { x: -100, opacity: 0 },
-      {
-        x: 0,
-        opacity: 1,
-        duration: 0.4,
-        stagger: 0.05,
-        ease: 'power2.out'
-      }
-    )
+    if (!prefersReducedMotion) {
+      gsap.fromTo(
+        '.card',
+        { x: -100, opacity: 0 },
+        {
+          x: 0,
+          opacity: 1,
+          duration: 0.4,
+          stagger: 0.05,
+          ease: 'power2.out'
+        }
+      )
+    }
   },
   { immediate: true }
 )
@@ -76,7 +79,7 @@ function rotateOrientation(index: number) {
   rotateCounts.value[index]++
 
   const cardBackEl = document.querySelector(`.card-back-${index}`) as HTMLElement
-  if (cardBackEl) {
+  if (cardBackEl && !prefersReducedMotion) {
     gsap.to(cardBackEl, {
       rotateZ: '+=180',
       duration: 0.6,

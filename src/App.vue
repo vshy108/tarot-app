@@ -1,19 +1,18 @@
 <template>
   <div
-    class="h-screen flex flex-col bg-gradient-to-b from-purple-950 to-indigo-950 text-white"
+    class="h-screen flex flex-col bg-gradient-to-b from-slate-950 via-stone-950 to-rose-950 text-white"
   >
     <!-- Navigation Header -->
-    <header class="bg-purple-900 shadow-md z-10">
+    <header class="bg-slate-950/95 shadow-md z-10">
       <div class="max-w-7xl mx-auto px-4 py-3 flex justify-between items-center">
         <RouterLink
           to="/"
-          class="flex items-center space-x-2 text-xl font-bold tracking-wide hover:text-pink-400 transition-transform hover:scale-105 group"
+          class="flex items-center space-x-2 text-xl font-bold tracking-wide hover:text-pink-300 transition-transform hover:scale-105 group"
         >
-          <span class="animate-pulse">🔮</span>
           <span
             class="relative after:absolute after:inset-0 after:from-white/0 after:via-white/40 after:to-white/0 after:translate-x-[-100%] group-hover:after:animate-shimmer"
           >
-            Tarot App
+            Tarot Table
           </span>
         </RouterLink>
 
@@ -33,10 +32,16 @@
             >Draw</RouterLink
           >
           <RouterLink
-            to="/simple-draw"
+            to="/single"
             class="hover:text-pink-400"
             active-class="text-pink-500 font-semibold"
-            >Simple Draw</RouterLink
+            >Single</RouterLink
+          >
+          <RouterLink
+            to="/spread"
+            class="hover:text-pink-400"
+            active-class="text-pink-500 font-semibold"
+            >Spread</RouterLink
           >
           <RouterLink
             to="/cards"
@@ -76,11 +81,18 @@
           Draw
         </RouterLink>
         <RouterLink
-          to="/simple-draw"
+          to="/single"
           class="block hover:text-pink-400"
           @click="isOpen = false"
         >
-          Simple Draw
+          Single
+        </RouterLink>
+        <RouterLink
+          to="/spread"
+          class="block hover:text-pink-400"
+          @click="isOpen = false"
+        >
+          Spread
         </RouterLink>
         <RouterLink to="/cards" class="block hover:text-pink-400" @click="isOpen = false">
           All Cards

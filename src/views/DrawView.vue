@@ -48,6 +48,7 @@ let cutToastTimeout: ReturnType<typeof setTimeout> | null = null;
 const cardWidth = 32;
 const cardHeight = 48;
 const deckTarget = { x: -cardWidth, y: -cardHeight };
+const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
 const sortedCards = ref<CollectedCard[]>([]); // shared reactive array
 
@@ -167,6 +168,18 @@ function collectCardsToDeck() {
 
   const lastIndex = sortedCards.value.length - 1;
 
+  if (prefersReducedMotion) {
+    sortedCards.value.forEach((card) => {
+      const isReversed = isCardReversed(card.rotate);
+      card.x = deckTarget.x;
+      card.y = isReversed ? 0 : deckTarget.y - 16;
+      card.rotate = isReversed ? 180 : 0;
+      card.orientation = isReversed ? "reversed" : "upright";
+    });
+    hasCollectedToDeck.value = true;
+    return;
+  }
+
   sortedCards.value.forEach((card, index) => {
     const isReversed = isCardReversed(card.rotate);
     // NOTE: gsap mutate the card value
@@ -201,6 +214,14 @@ function cutDeck() {
   const portion = sortedCards.value.slice(from - 1, to);
   const rest = sortedCards.value.slice(0, from - 1).concat(sortedCards.value.slice(to));
   const cutOffset = 80;
+
+  if (prefersReducedMotion) {
+    sortedCards.value = cutPosition.value === "top" ? [...portion, ...rest] : [...rest, ...portion];
+    cutCount.value += 1;
+    showCutInfoToast(from, to, cutPosition.value);
+    isCutting.value = false;
+    return;
+  }
 
   const timeline = gsap.timeline({
     onComplete: () => {
