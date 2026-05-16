@@ -31,7 +31,7 @@
 
       <div class="rounded-lg border border-pink-300/20 bg-slate-950/70 p-4">
         <img
-          src="/src/assets/cards/maj-00-the-fool.png"
+          :src="foolCardImage"
           alt="The Fool tarot card"
           class="mx-auto max-h-96 rounded-md object-contain shadow-2xl"
         >
@@ -54,3 +54,7 @@
     </section>
   </main>
 </template>
+
+<script setup lang="ts">
+import foolCardImage from '@/assets/cards/maj-00-the-fool.png'
+</script>
